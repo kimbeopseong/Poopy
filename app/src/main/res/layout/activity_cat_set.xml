@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".CatSetActivity"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <TextView
+            android:id="@+id/tvUpdateTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="UPDATE CAT DATA"
+            android:textSize="24sp"
+            android:layout_marginTop="15dp"
+            android:textColor="@color/colorPrimary" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:layout_width="170dp"
+            android:layout_height="170dp"
+            android:layout_below="@+id/tvUpdateTitle"
+            android:id="@+id/cvUpdateCat"
+            android:src="@drawable/default_profile_image"
+            app:civ_border_width="1.2dp"
+            app:civ_border_overlay="true"
+            android:layout_marginTop="10dp"
+            android:layout_centerHorizontal="true"/>
+
+
+        <EditText
+            android:id="@+id/etUpdateCatName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:layout_below="@+id/cvUpdateCat"
+            android:hint="@string/cname"
+            android:drawableTint="@color/colorPrimary"
+            android:textColorHint="@color/colorPrimary"
+            android:textColor="@color/colorPrimaryDark"
+            android:inputType="text"
+            android:background="@drawable/inputs"
+            android:drawableStart="@drawable/edit_pet"
+            android:layout_marginTop="25dp"
+            android:layout_marginLeft="17dp"
+            android:layout_marginRight="17dp"
+            android:textCursorDrawable="@drawable/pink_cursor"/>
+
+        <EditText
+            android:id="@+id/etUpdateCatAge"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:layout_below="@+id/etUpdateCatName"
+            android:hint="@string/cage"
+            android:drawableTint="@color/colorPrimary"
+            android:textColorHint="@color/colorPrimary"
+            android:textColor="@color/colorPrimaryDark"
+            android:inputType="number"
+            android:background="@drawable/inputs"
+            android:drawableStart="@drawable/edit_pet"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="17dp"
+            android:layout_marginRight="17dp"
+            android:textCursorDrawable="@drawable/pink_cursor"/>
+
+        <EditText
+            android:id="@+id/etUPdateCatSpecies"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:layout_below="@+id/etUpdateCatAge"
+            android:hint="@string/cspecies"
+            android:drawableTint="@color/colorPrimary"
+            android:textColorHint="@color/colorPrimary"
+            android:textColor="@color/colorPrimaryDark"
+            android:inputType="text"
+            android:background="@drawable/inputs"
+            android:drawableStart="@drawable/edit_pet"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="17dp"
+            android:layout_marginRight="17dp"
+            android:textCursorDrawable="@drawable/pink_cursor"/>
+
+
+        <RadioGroup
+            android:id="@+id/update_catRadio"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/etUPdateCatSpecies"
+            android:layout_marginLeft="17dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginRight="17dp"
+            android:drawableTint="@color/colorPrimary"
+            android:gravity="center_horizontal"
+            android:padding="4sp"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/upRbtnCMale"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="@drawable/inputs"
+                android:padding="10sp"
+                android:layout_marginRight="17dp"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="17sp"
+                android:text="수컷" />
+
+            <RadioButton
+                android:id="@+id/upRbtnCFemale"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="@drawable/inputs"
+                android:padding="10sp"
+                android:layout_marginRight="17dp"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="17sp"
+                android:gravity="center"
+                android:text="암컷" />
+        </RadioGroup>
+
+
+        <Button
+            android:id="@+id/btnUpdateCat"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="UPDATE"
+            android:padding="4dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="17dp"
+            android:layout_marginRight="17dp"
+            android:textSize="24sp"
+            android:textAllCaps="false"
+            android:textColor="@color/colorPrimary"
+            android:background="@drawable/buttons"
+            android:layout_below="@+id/update_catRadio"
+            />
+
+    </RelativeLayout>
+</ScrollView>

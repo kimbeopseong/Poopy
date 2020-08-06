@@ -12,14 +12,20 @@
         tools:layout="@layout/fragment_home" />
 
     <fragment
-        android:id="@+id/navigation_dashboard"
-        android:name="com.example.poopy.ui.dashboard.DashboardFragment"
-        android:label="@string/title_dashboard"
-        tools:layout="@layout/fragment_dashboard" />
+        android:id="@+id/navigation_cat_choice_camera"
+        android:name="com.example.poopy.ui.camera.CameraFragment"
+        android:label="Choose Pet"
+        tools:layout="@layout/cat_choice_fragment" />
 
     <fragment
-        android:id="@+id/navigation_notifications"
-        android:name="com.example.poopy.ui.notifications.NotificationsFragment"
-        android:label="@string/title_notifications"
-        tools:layout="@layout/fragment_notifications" />
+        android:id="@+id/navigation_cat_choice_list"
+        android:name="com.example.poopy.ui."
+        android:label="Choose Pet"
+        tools:layout="@layout/cat_choice_fragment" />
+
+    <fragment
+        android:id="@+id/navigation_plus"
+        android:name="com.example.poopy.ui.plus.PlusFragment"
+        android:label="@string/title_plus"
+        tools:layout="@layout/fragment_plus" />
 </navigation>

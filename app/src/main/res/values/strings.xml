@@ -1,6 +1,26 @@
 <resources>
     <string name="app_name">Poopy</string>
     <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="title_camera">Camera</string>
+    <string name="title_list">List</string>
+    <string name="title_plus">Plus</string>
+    <string name="title_Add">Add new cat</string>
+    <string name="title_Update">Update cat\'s data</string>
+    <string name="email">Email...</string>
+    <string name="name">Name...</string>
+    <string name="birthday">Birthday...</string>
+    <string name="password">Password...</string>
+    <string name="message">Message...</string>
+    <string name="cname">Cat\'s name</string>
+    <string name="cage">Cat\'s age</string>
+    <string name="cspecies">Cat\'s species</string>
+    <string name="remeber">로그인 정보 기억하기</string>
+    <string name="login">Login</string>
+    <string name="already_have_account">Already have an account?</string>
+    <string name="signup">Create Account</string>
+    <string name="register_success_popup">Registered successfully.\nVerification email has been sent.\nPlease verify email.</string>
+    <string name="picture">촬영</string>
+    <string name="description_info">Info</string>
+    <string name="request_permission">This sample needs camera permission.</string>
+    <string name="camera_error">This device doesn\'t support Camera2 API.</string>
 </resources>
