@@ -13,7 +13,7 @@
 
     <fragment
         android:id="@+id/navigation_cat_choice_camera"
-        android:name="com.example.poopy.ui.camera.CameraFragment"
+        android:name="com.example.poopy.ui.camera.CameraCatChoice"
         android:label="Choose Pet"
         tools:layout="@layout/cat_choice_fragment" />
 
