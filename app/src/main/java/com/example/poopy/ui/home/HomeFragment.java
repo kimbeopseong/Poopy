@@ -123,6 +123,7 @@ public class HomeFragment extends Fragment {
                                             holder.catage.setText(catAge+"살");
                                             holder.catspec.setText(catSpec);
                                             holder.catsex.setText(catSex);
+
                                             //View Item 클릭리스너, 클릭 시 CatSetActivity에서 해당 고양이 정보 수정
                                             holder.itemView.setOnClickListener(new View.OnClickListener() {
                                                 @Override
