@@ -1,0 +1,159 @@
+{
+  "project_info": {
+    "project_number": "557356132677",
+    "firebase_url": "https://poopy-50815.firebaseio.com",
+    "project_id": "poopy-50815",
+    "storage_bucket": "poopy-50815.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:557356132677:android:22cf18a7bdc1fc903e362c",
+        "android_client_info": {
+          "package_name": "com.cookandroid.poopy"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "557356132677-o718ctrubrurhnmu3ok7s0uro7lo8tk0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.cookandroid.poopy",
+            "certificate_hash": "18ef315c04ad3ce34c9d168a6ef207432e21b5e0"
+          }
+        },
+        {
+          "client_id": "557356132677-o2jlhs12debb25s1pvlbuj8721jvgvss.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDH0aZvY-pGyl-Oomc04fhl-Sa78xE2mSk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "557356132677-o2jlhs12debb25s1pvlbuj8721jvgvss.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:557356132677:android:f26597948088ad4d3e362c",
+        "android_client_info": {
+          "package_name": "com.cookandroid.testapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "557356132677-o2jlhs12debb25s1pvlbuj8721jvgvss.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDH0aZvY-pGyl-Oomc04fhl-Sa78xE2mSk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "557356132677-o2jlhs12debb25s1pvlbuj8721jvgvss.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:557356132677:android:fa05776115550f853e362c",
+        "android_client_info": {
+          "package_name": "com.example.poopy"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "557356132677-o2jlhs12debb25s1pvlbuj8721jvgvss.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDH0aZvY-pGyl-Oomc04fhl-Sa78xE2mSk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "557356132677-o2jlhs12debb25s1pvlbuj8721jvgvss.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:557356132677:android:029d5ee8bb99cc3f3e362c",
+        "android_client_info": {
+          "package_name": "com.example.puppy"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "557356132677-l03a1tbes0g3o35autrp1thtei1d72dj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.puppy",
+            "certificate_hash": "4f4df4cca197cca781ea3d4961814f9eec426271"
+          }
+        },
+        {
+          "client_id": "557356132677-sj9ck5933dqjlv5fe8584baadmdolgd9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.puppy",
+            "certificate_hash": "18ef315c04ad3ce34c9d168a6ef207432e21b5e0"
+          }
+        },
+        {
+          "client_id": "557356132677-jmlkqmjm1up1a29hkcmser38vf9k0df9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.puppy",
+            "certificate_hash": "78bdbf050902a86418ce2a0a20e4973286b292dc"
+          }
+        },
+        {
+          "client_id": "557356132677-o2jlhs12debb25s1pvlbuj8721jvgvss.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDH0aZvY-pGyl-Oomc04fhl-Sa78xE2mSk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "557356132677-o2jlhs12debb25s1pvlbuj8721jvgvss.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
