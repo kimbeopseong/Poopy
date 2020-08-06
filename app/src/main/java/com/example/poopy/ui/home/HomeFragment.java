@@ -44,7 +44,7 @@ public class HomeFragment extends Fragment {
     private String currentUserId;
     private ImageView addCat;
 
-    String petUri,petName,petSex,petAge,petSpec;
+    String catUri,catName,catSex,catAge,catSpec;
 
     public HomeFragment(){ }
 
@@ -77,8 +77,8 @@ public class HomeFragment extends Fragment {
     public void onStart(){
         super.onStart();
         FirestoreRecyclerOptions<Cat> options = new FirestoreRecyclerOptions.Builder<Cat>()
-                .setQuery(db.collection("Pet").whereEqualTo("p_ID",currentUserId), Cat.class).build();
-
+                .setQuery(db.collection("User").document(currentUserId).collection("Cat"), Cat.class).build();
+        //FireRecyclerAdapter로 Firebase Cat 컬렉션의 Document를 읽어옴
         FirestoreRecyclerAdapter<Cat, CatViewHolder> catAdapter=
                 new FirestoreRecyclerAdapter<Cat, CatViewHolder>(options) {
                     @Override
@@ -88,17 +88,18 @@ public class HomeFragment extends Fragment {
                         docRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
                             @Override
                             public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
-                                db.collection("Pet").document(cat_uid).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                db.collection("User").document(currentUserId).collection("Cat").document(cat_uid).get().
+                                        addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                     @Override
                                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                                         if(task.isSuccessful()){
-                                            petName=task.getResult().get("p_name").toString();
-                                            petSex=task.getResult().get("p_sex").toString();
-                                            petAge=task.getResult().get("p_age").toString();
-                                            petSpec=task.getResult().get("p_species").toString();
-                                            if(task.getResult().contains("p_uri")){
-                                                petUri=task.getResult().get("p_uri").toString();
-                                                Picasso.get().load(petUri)
+                                            catName=task.getResult().get("c_name").toString();
+                                            catSex=task.getResult().get("c_sex").toString();
+                                            catAge=task.getResult().get("c_age").toString();
+                                            catSpec=task.getResult().get("c_species").toString();
+                                            if(task.getResult().contains("c_uri")){
+                                                catUri=task.getResult().get("c_uri").toString();
+                                                Picasso.get().load(catUri)
                                                         .networkPolicy(NetworkPolicy.OFFLINE)
                                                         .placeholder(R.drawable.default_profile_image)
                                                         .error(R.drawable.default_profile_image)
@@ -110,7 +111,7 @@ public class HomeFragment extends Fragment {
 
                                                             @Override
                                                             public void onError(Exception e) {
-                                                                Picasso.get().load(petUri)
+                                                                Picasso.get().load(catUri)
                                                                         .placeholder(R.drawable.default_profile_image)
                                                                         .error(R.drawable.default_profile_image)
                                                                         .resize(0,90)
@@ -118,11 +119,11 @@ public class HomeFragment extends Fragment {
                                                             }
                                                         });
                                             }
-                                            holder.petname.setText(petName);
-                                            holder.petage.setText(petAge+"살");
-                                            holder.petspec.setText(petSpec);
-                                            holder.petsex.setText(petSex);
-
+                                            holder.catname.setText(catName);
+                                            holder.catage.setText(catAge+"살");
+                                            holder.catspec.setText(catSpec);
+                                            holder.catsex.setText(catSex);
+                                            //View Item 클릭리스너, 클릭 시 CatSetActivity에서 해당 고양이 정보 수정
                                             holder.itemView.setOnClickListener(new View.OnClickListener() {
                                                 @Override
                                                 public void onClick(View v) {
@@ -150,17 +151,18 @@ public class HomeFragment extends Fragment {
         catAdapter.startListening();
 
     }
+    //RecyclerView ViewHolder
     public static class CatViewHolder extends RecyclerView.ViewHolder{
         CircleImageView ivPet;
-        TextView petname,petsex,petspec,petage;
+        TextView catname,catsex,catspec,catage;
 
         public CatViewHolder(@NonNull View itemView){
             super(itemView);
             ivPet=itemView.findViewById(R.id.ivCat);
-            petname=itemView.findViewById(R.id.tvCName);
-            petsex=itemView.findViewById(R.id.tvCSex);
-            petspec=itemView.findViewById(R.id.tvCSpe);
-            petage=itemView.findViewById(R.id.tvCAge);
+            catname=itemView.findViewById(R.id.tvCName);
+            catsex=itemView.findViewById(R.id.tvCSex);
+            catspec=itemView.findViewById(R.id.tvCSpe);
+            catage=itemView.findViewById(R.id.tvCAge);
         }
     }
 }
