@@ -1,0 +1,89 @@
+package com.example.poopy.ui.camera;
+
+import android.graphics.Rect;
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.paging.PagedList;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.poopy.utils.Cat;
+import com.example.poopy.R;
+import com.firebase.ui.firestore.SnapshotParser;
+import com.firebase.ui.firestore.paging.FirestorePagingOptions;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+public class CameraCatChoice extends Fragment {
+        private static final String TAG = "CAMERA CAT FRAGMENT";
+
+        private View camera_catChoice;
+        private RecyclerView catChoiceList;
+
+        private FirebaseAuth mAuth;
+        private String currintUID;
+        private FirebaseFirestore db;
+
+        public CameraCatChoice(){}
+
+        @Nullable
+        @Override
+        public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
+                camera_catChoice = inflater.inflate(R.layout.cat_choice_fragment, container, false);
+
+                mAuth = FirebaseAuth.getInstance();
+                currintUID = mAuth.getCurrentUser().getUid();
+
+                db = FirebaseFirestore.getInstance();
+
+                PagedList.Config config = new PagedList.Config.Builder().setInitialLoadSizeHint(6).setPageSize(3).build();
+
+                FirestorePagingOptions<Cat> options = new FirestorePagingOptions.Builder<Cat>()
+                        .setLifecycleOwner(this)
+                        .setQuery(db.collection("Pet").whereEqualTo("p_ID", currintUID), config, new SnapshotParser<Cat>() {
+                                @NonNull
+                                @Override
+                                public Cat parseSnapshot(@NonNull DocumentSnapshot snapshot) {
+                                        Cat cat = snapshot.toObject(Cat.class);
+                                        cat.setCatName(snapshot.get("p_name").toString());
+                                        cat.setProfile(snapshot.get("p_uri").toString());
+                                        return cat;
+                                }
+                        }).build();
+
+                return super.onCreateView(inflater, container, savedInstanceState);
+        }
+
+        public class ItemDecoration extends RecyclerView.ItemDecoration{
+                private int spanCount;
+                private int spacing;
+
+                public ItemDecoration(int spanCount, int spacing){
+                        this.spanCount = spanCount;
+                        this.spacing = spacing;
+                }
+
+                @Override
+                public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
+                        int position = parent.getChildAdapterPosition(view);
+                        int column = position % spanCount;
+
+                        if (column < 1){
+                                outRect.right = spacing - (column + 1) * spacing / spanCount;
+                        } else {
+                                outRect.right = 0;
+                        }
+
+                        outRect.bottom = spacing;
+
+                        super.getItemOffsets(outRect, view, parent, state);
+                }
+        }
+}
