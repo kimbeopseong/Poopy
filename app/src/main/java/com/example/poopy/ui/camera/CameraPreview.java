@@ -80,7 +80,7 @@ public class CameraPreview extends Thread {
         ORIENTATIONS.append(Surface.ROTATION_270, 180);
     }
 
-                                                                                                        /** Preview 객체 설정   */
+    /** Preview 객체 설정   */
     public CameraPreview(Context context, TextureView textureView, Button button){
 
         mContext = context;
