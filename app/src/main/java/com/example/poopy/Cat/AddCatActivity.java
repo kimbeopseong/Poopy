@@ -5,7 +5,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -17,7 +16,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.RadioButton;
 
 import com.example.poopy.MainActivity;
@@ -49,17 +47,14 @@ public class AddCatActivity extends AppCompatActivity {
     FirebaseFirestore db;
     String documentId;
 
-    //이미지 관련 부분
     private static final String TAG = "AddCatActivity";
     int REQUEST_IMAGE_CODE=1001;
-    private CircleImageView ivUser;
-    private ImageView editPhotoIcon;
     private StorageReference mStorageRef;
     int REQUEST_EXTERNAL_STORAGE_PERMISSION=1002;
 
     private String currentUserID;
     private FirebaseAuth mAuth;
-    String pet_profile_download_url;
+    String cat_profile_download_url;
 
 
     @Override
@@ -68,9 +63,10 @@ public class AddCatActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_cat);
 
         db = FirebaseFirestore.getInstance();
-        documentId=db.collection("Pet").document().getId();
-        mAuth = FirebaseAuth.getInstance();
         currentUserID = mAuth.getCurrentUser().getUid();
+        //User 내부 컬렉션으로 Pet을 둠
+        documentId = db.collection("User").document(currentUserID).collection("Cat").document().getId();
+        mAuth = FirebaseAuth.getInstance();
 
         cvCat=(CircleImageView)findViewById(R.id.cvCat);
         etCatName = (EditText)findViewById(R.id.etCatName);
@@ -95,7 +91,7 @@ public class AddCatActivity extends AppCompatActivity {
 
         }
         mStorageRef = FirebaseStorage.getInstance().getReference();
-
+        //고양이 사진선택 -> onActivityResult호출 2020.06.05 BJH
         cvCat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -104,7 +100,7 @@ public class AddCatActivity extends AppCompatActivity {
             }
         });
 
-
+        //고양이 추가 버튼 클릭 시 해당 내용 반영 2020.06.05 BJH
         btnAddCat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -122,6 +118,7 @@ public class AddCatActivity extends AppCompatActivity {
             }
         });
     }
+    //
     private void createNewCat(String catName, int catAge ,String catSpecies, String catSex) {
         if (TextUtils.isEmpty(catName)) {
             SweetToast.error(AddCatActivity.this, "Your cat's name is required.");
@@ -136,15 +133,14 @@ public class AddCatActivity extends AppCompatActivity {
         } else {
             final Map<String, Object> user = new HashMap<>();
 
-            user.put("p_name", catName);
-            user.put("p_sex", catSex);
-            user.put("p_species", catSpecies);
-            user.put("p_age", catAge);
-            user.put("p_ID",currentUserID);
+            user.put("c_name", catName);
+            user.put("c_sex", catSex);
+            user.put("c_species", catSpecies);
+            user.put("c_age", catAge);
 
-            // Add a new document with a generated ID
-            db.collection("Pet")
-                    .document(documentId).set(user, SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
+            //User ID의 내부컬렉션 Cat에 도큐먼트 생성 2020.06.05 BJH
+            db.collection("User").document(currentUserID).collection("Cat").document(documentId).
+                    set(user, SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
 
@@ -152,6 +148,8 @@ public class AddCatActivity extends AppCompatActivity {
             });
         }
     }
+
+    //고양이 사진 선택을 위해 cvCat을 클릭했을 때 호출 2020.06.05 BJH
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode==REQUEST_IMAGE_CODE){
@@ -162,8 +160,8 @@ public class AddCatActivity extends AppCompatActivity {
                     .error(R.drawable.default_profile_image)
                     .resize(0,90)
                     .into(cvCat);
-
-            final StorageReference riversRef = mStorageRef.child("Pets").child(currentUserID).child(documentId).child("profile.jpg");
+            //firebase storage에 사진 반영 2020.06.05 BJH
+            final StorageReference riversRef = mStorageRef.child("Cats").child(currentUserID).child(documentId).child("profile.jpg");
             UploadTask uploadTask=riversRef.putFile(image);
             Task<Uri> uriTask=uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                 @Override
@@ -171,22 +169,21 @@ public class AddCatActivity extends AppCompatActivity {
                     if(!task.isSuccessful()){
                         SweetToast.error(AddCatActivity.this, "Profile Photo Error: " + task.getException().getMessage());
                     }
-                    pet_profile_download_url=riversRef.getDownloadUrl().toString();
+                    cat_profile_download_url=riversRef.getDownloadUrl().toString();
                     return riversRef.getDownloadUrl();
                 }
             }).addOnCompleteListener(new OnCompleteListener<Uri>() {
                 @Override
                 public void onComplete(@NonNull Task<Uri> task) {
+                    //firebase database에 Cat사진 URI 추가 2020.06.05 BJH
                     if(task.isSuccessful()){
-                        pet_profile_download_url=task.getResult().toString();
-
-                        HashMap<String, Object> update_pet_data=new HashMap<>();
-                        update_pet_data.put("p_uri",pet_profile_download_url);
-
-                        db.collection("Pet").document(documentId).set(update_pet_data,SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        cat_profile_download_url=task.getResult().toString();
+                        HashMap<String, Object> update_cat_data=new HashMap<>();
+                        update_cat_data.put("c_uri",cat_profile_download_url);
+                        db.collection("User").document(currentUserID).collection("Cat").document(documentId).
+                                set(update_cat_data,SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
-
                             }
                         });
 
