@@ -1,6 +1,7 @@
 package com.example.poopy.ui.camera;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
@@ -25,6 +26,7 @@ import com.example.poopy.R;
 
 public class CameraActivity extends AppCompatActivity {
 
+    public static Intent intent;
     public static AppCompatActivity cameraActivity;
 
     private TextureView textureView;
@@ -42,6 +44,7 @@ public class CameraActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_cam);
 
+        intent = getIntent();
         cameraActivity = CameraActivity.this;
 
         btnCapture = (Button) findViewById(R.id.btnCapture);

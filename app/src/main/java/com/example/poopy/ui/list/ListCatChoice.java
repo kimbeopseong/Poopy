@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 
 import com.example.poopy.R;
 
-public class ListFragment extends AppCompatActivity {
+public class ListCatChoice extends AppCompatActivity {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {

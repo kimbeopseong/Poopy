@@ -19,7 +19,7 @@
 
     <fragment
         android:id="@+id/navigation_cat_choice_list"
-        android:name="com.example.poopy.ui."
+        android:name="com.example.poopy.ui.list.ListCatChoice"
         android:label="Choose Pet"
         tools:layout="@layout/cat_choice_fragment" />
 
