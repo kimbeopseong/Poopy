@@ -3,7 +3,6 @@ package com.example.poopy.ui.camera;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -40,18 +39,6 @@ import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.example.poopy.utils.ResultActivity;
-import com.google.android.gms.tasks.Continuation;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.SetOptions;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
-
 import org.jetbrains.annotations.Nullable;
 
 import java.io.ByteArrayOutputStream;
@@ -65,11 +52,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.Semaphore;
-
-import xyz.hasnat.sweettoast.SweetToast;
 
 
 public class CameraPreview extends Thread {
@@ -85,15 +69,7 @@ public class CameraPreview extends Thread {
     private StreamConfigurationMap map;
 
     private int deviceRotation;
-
-    private StorageReference mStorageRef;
-    private String currentUID;
-    private FirebaseAuth mAuth;
-
-    private FirebaseFirestore db;
-    private Intent intent;
-
-    private String poopy_uri, date, stat, lv, currentName;
+    private String date;
 
     private static final SparseIntArray ORIENTATIONS = new SparseIntArray(4);
 
@@ -122,14 +98,6 @@ public class CameraPreview extends Thread {
         Date mDate = new Date(now);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy.MM.dd_hh:mm:ss");
         date = simpleDateFormat.format(mDate);
-
-        db = FirebaseFirestore.getInstance();
-        mStorageRef = FirebaseStorage.getInstance().getReference();
-        mAuth = FirebaseAuth.getInstance();
-        currentUID = mAuth.getCurrentUser().getUid();
-
-        intent = CameraActivity.intent;
-        currentName = intent.getStringExtra("Name");
 
     }
                                                                                                     // cameraID 가져오기
@@ -369,49 +337,11 @@ public class CameraPreview extends Thread {
                         output = new FileOutputStream(file);
                         output.write(bytes);
 
-                        final StorageReference riversRef = mStorageRef.child("Feeds").child(currentUID).child(intent.getExtras().get("Name").toString()).child(date+".jpg");
-                        UploadTask uploadTask = riversRef.putFile(uri);
-
-                        Task<Uri> uriTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
-                            @Override
-                            public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
-                                if (!task.isSuccessful()){
-                                    SweetToast.error(mContext, "Poopy Photo Error: " + task.getException().getMessage());
-                                    Log.e(TAG, "Error: " + task.getException().getMessage());
-                                }
-                                poopy_uri = riversRef.getDownloadUrl().toString();
-                                return riversRef.getDownloadUrl();
-                            }
-                        }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Uri> task) {
-                                if (task.isSuccessful()){
-                                    poopy_uri = task.getResult().toString();
-                                    stat = "Example stat";
-                                    lv = "1";
-
-                                    final HashMap<String, Object> update_poopy_data = new HashMap<>();
-                                    update_poopy_data.put("poopy_uri", poopy_uri);
-                                    update_poopy_data.put("date", date);
-                                    update_poopy_data.put("stat", stat);
-                                    update_poopy_data.put("lv", lv);
-
-                                    db.collection("User").document(currentUID).collection("Pet").document(intent.getExtras().get("Name").toString())
-                                            .collection("PoopData").document().set(update_poopy_data, SetOptions.merge())
-                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                @Override
-                                                public void onSuccess(Void aVoid) {
-                                                    Intent goResult = callResult(update_poopy_data);
-                                                    mContext.startActivity(goResult);
-                                                    CameraActivity cameraActivity = (CameraActivity) CameraActivity.cameraActivity;
-                                                    cameraActivity.finish();
-                                                }
-                                            });
-                                } else if (!task.isSuccessful()){
-                                    Log.e(TAG, "Error: " + task.getException().getMessage());
-                                }
-                            }
-                        });
+                        /**
+                         *
+                         * 여기에 Firebase 관련 저장 기능을 가진 내용을 작성하면 될 듯.
+                         *
+                         * */
 
                     } catch(Exception e){
                         e.getMessage();
@@ -515,14 +445,6 @@ public class CameraPreview extends Thread {
         } finally {
             mCameraOpenCloseLock.release();
         }
-    }
-
-    private Intent callResult(HashMap<String, Object> map){
-        Intent result = new Intent(mContext, ResultActivity.class);
-        result.putExtra("uri", poopy_uri);
-        result.putExtra("date", date);
-        result.putExtra("name", currentName);
-        return result;
     }
 
 }
