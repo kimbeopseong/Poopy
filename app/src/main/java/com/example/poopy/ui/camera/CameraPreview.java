@@ -40,6 +40,8 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import org.jetbrains.annotations.Nullable;
+import org.opencv.android.Utils;
+import org.opencv.core.Mat;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -80,7 +82,14 @@ public class CameraPreview extends Thread {
         ORIENTATIONS.append(Surface.ROTATION_270, 180);
     }
 
-                                                                                                        /** Preview 객체 설정   */
+    static{
+        System.loadLibrary("opencv_java4");
+        System.loadLibrary("imageprocessing");
+    }
+
+    private Mat image_input, image_output;
+
+    /** Preview 객체 설정   */
     public CameraPreview(Context context, TextureView textureView, Button button){
 
         mContext = context;
@@ -307,11 +316,14 @@ public class CameraPreview extends Thread {
                         bitmap.createBitmap(bitmap, 0, 0, 640, 480);
                         resizingImage = Bitmap.createScaledBitmap(bitmap, 255, 255, true);
 
-                        /**
-                         *
-                         * resizingImage를 활용한 OpenCV 관련 함수 자리
-                         *
-                         * */
+                        //OpenCV imageprocessing(bitmapToMat => matToBitmap)함수 이용한 전경검출 2020.07.13 BJH
+                        Bitmap tmp = resizingImage.copy(Bitmap.Config.ARGB_8888, true);
+                        image_input = new Mat();
+                        Utils.bitmapToMat(tmp, image_input);
+                        //poop photo's foreground
+                        Bitmap foreground = imageprocess_and_save();
+                        if(foreground != null)
+                            Log.d(TAG, "foreground is set");
 
                         ByteArrayOutputStream stream = new ByteArrayOutputStream();
                         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
@@ -445,6 +457,20 @@ public class CameraPreview extends Thread {
         } finally {
             mCameraOpenCloseLock.release();
         }
+    }
+
+    //native함수 선언 2020.07.13 BJH
+    public native void imageprocessing(long input_image, long ouput_image);
+
+    //imageprocessing JNI function 호출 2020.07.13 BJH
+    public Bitmap imageprocess_and_save() {
+        if (image_output == null)
+            image_output = new Mat();
+        imageprocessing(image_input.getNativeObjAddr(), image_output.getNativeObjAddr());
+        Bitmap bitmapOutput = Bitmap.createBitmap(image_output.cols(), image_output.rows(), Bitmap.Config.ARGB_8888);
+        //image_output to Bitmap
+        Utils.matToBitmap(image_output, bitmapOutput);
+        return bitmapOutput;
     }
 
 }
