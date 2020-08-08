@@ -15,13 +15,13 @@
         android:id="@+id/navigation_cat_choice_camera"
         android:name="com.example.poopy.ui.camera.CameraCatChoice"
         android:label="Choose Pet"
-        tools:layout="@layout/cat_choice_fragment" />
+        tools:layout="@layout/fragment_cat_choice" />
 
     <fragment
         android:id="@+id/navigation_cat_choice_list"
         android:name="com.example.poopy.ui.list.ListCatChoice"
         android:label="Choose Pet"
-        tools:layout="@layout/cat_choice_fragment" />
+        tools:layout="@layout/fragment_cat_choice" />
 
     <fragment
         android:id="@+id/navigation_plus"

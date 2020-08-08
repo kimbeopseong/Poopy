@@ -39,7 +39,7 @@ public class CameraCatChoice extends Fragment implements CameraCatChoiceAdapter.
         @Override
         public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-                camera_catChoice = inflater.inflate(R.layout.cat_choice_fragment, container, false);
+                camera_catChoice = inflater.inflate(R.layout.fragment_cat_choice, container, false);
 
                 mAuth = FirebaseAuth.getInstance();
                 currintUID = mAuth.getCurrentUser().getUid();
