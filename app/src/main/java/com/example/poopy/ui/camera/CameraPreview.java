@@ -3,6 +3,7 @@ package com.example.poopy.ui.camera;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -16,7 +17,6 @@ import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.TotalCaptureResult;
-import android.hardware.camera2.params.SessionConfiguration;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.Image;
 import android.media.ImageReader;
@@ -39,7 +39,17 @@ import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import org.jetbrains.annotations.Nullable;
+import com.example.poopy.utils.ResultActivity;
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -50,10 +60,14 @@ import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.Semaphore;
+
+import xyz.hasnat.sweettoast.SweetToast;
 
 
 public class CameraPreview extends Thread {
@@ -69,7 +83,15 @@ public class CameraPreview extends Thread {
     private StreamConfigurationMap map;
 
     private int deviceRotation;
-    private String date;
+
+    private StorageReference mStorageRef;
+    private String currentUID;
+    private FirebaseAuth mAuth;
+
+    private FirebaseFirestore db;
+    private Intent intent;
+
+    private String poopy_uri, date, stat, lv, currentName;
 
     private static final SparseIntArray ORIENTATIONS = new SparseIntArray(4);
 
@@ -98,6 +120,14 @@ public class CameraPreview extends Thread {
         Date mDate = new Date(now);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy.MM.dd_hh:mm:ss");
         date = simpleDateFormat.format(mDate);
+
+        db = FirebaseFirestore.getInstance();
+        mStorageRef = FirebaseStorage.getInstance().getReference();
+        mAuth = FirebaseAuth.getInstance();
+        currentUID = Objects.requireNonNull(mAuth.getCurrentUser()).getUid();
+
+        intent = CameraActivity.intent;
+        currentName = intent.getStringExtra("Name");
 
     }
                                                                                                     // cameraID 가져오기
@@ -213,7 +243,7 @@ public class CameraPreview extends Thread {
         mPreviewBuilder.addTarget(surface);
 
         try{
-            mCameraDevice.createCaptureSession(Arrays.asList(surface),
+            mCameraDevice.createCaptureSession(Collections.singletonList(surface),
                     new CameraCaptureSession.StateCallback() {
                 @Override
                 public void onConfigured(@NonNull CameraCaptureSession cameraCaptureSession) {
@@ -274,7 +304,7 @@ public class CameraPreview extends Thread {
                                                                                                         // Capture Image 회전 설정
             CameraManager manager = (CameraManager) mContext.getSystemService(Context.CAMERA_SERVICE);
             CameraCharacteristics characteristics = manager.getCameraCharacteristics(mCameraDevice.getId());
-            deviceRotation = mContext.getDisplay().getRotation();
+            deviceRotation = Objects.requireNonNull(mContext.getDisplay()).getRotation();
             int sensorOrientation = characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION);
             int surfaceRotation = ORIENTATIONS.get(deviceRotation);
             int jpegOrientation = (surfaceRotation + sensorOrientation + 270) % 360;
@@ -315,8 +345,7 @@ public class CameraPreview extends Thread {
 
                         ByteArrayOutputStream stream = new ByteArrayOutputStream();
                         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-                        byte[] pic = stream.toByteArray();
-                        bytes = pic;
+                        bytes = stream.toByteArray();
                         save(bytes);
                     } catch (FileNotFoundException e){
                         e.printStackTrace();
@@ -330,6 +359,7 @@ public class CameraPreview extends Thread {
                     }
                 }
 
+                                                                                                    //DB 내에 저장
                 private void save(byte[] bytes) throws IOException {
                     OutputStream output = null;
                     Log.e(TAG, "세이브 함수 진입 !!!");
@@ -337,11 +367,49 @@ public class CameraPreview extends Thread {
                         output = new FileOutputStream(file);
                         output.write(bytes);
 
-                        /**
-                         *
-                         * 여기에 Firebase 관련 저장 기능을 가진 내용을 작성하면 될 듯.
-                         *
-                         * */
+                        final StorageReference riversRef = mStorageRef.child("Feeds").child(currentUID).child(Objects.requireNonNull(intent.getExtras().get("Name")).toString()).child(date+".jpg");
+                        UploadTask uploadTask = riversRef.putFile(uri);
+
+                        Task<Uri> uriTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                            @Override
+                            public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                                if (!task.isSuccessful()){
+                                    SweetToast.error(mContext, "Poopy Photo Error: " + Objects.requireNonNull(task.getException()).getMessage());
+                                    Log.e(TAG, "Error: " + task.getException().getMessage());
+                                }
+                                poopy_uri = riversRef.getDownloadUrl().toString();
+                                return riversRef.getDownloadUrl();
+                            }
+                        }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Uri> task) {
+                                if (task.isSuccessful()){
+                                    poopy_uri = Objects.requireNonNull(task.getResult()).toString();
+                                    stat = "Example stat";
+                                    lv = "1";
+
+                                    final HashMap<String, Object> update_poopy_data = new HashMap<>();
+                                    update_poopy_data.put("poopy_uri", poopy_uri);
+                                    update_poopy_data.put("date", date);
+                                    update_poopy_data.put("stat", stat);
+                                    update_poopy_data.put("lv", lv);
+
+                                    db.collection("User").document(currentUID).collection("Pet").document(Objects.requireNonNull(intent.getExtras().get("Name")).toString())
+                                            .collection("PoopData").document().set(update_poopy_data, SetOptions.merge())
+                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void aVoid) {
+                                                    Intent goResult = callResult(update_poopy_data);
+                                                    mContext.startActivity(goResult);
+                                                    CameraActivity cameraActivity = (CameraActivity) CameraActivity.cameraActivity;
+                                                    cameraActivity.finish();
+                                                }
+                                            });
+                                } else if (!task.isSuccessful()){
+                                    Log.e(TAG, "Error: " + Objects.requireNonNull(task.getException()).getMessage());
+                                }
+                            }
+                        });
 
                     } catch(Exception e){
                         e.getMessage();
@@ -396,7 +464,7 @@ public class CameraPreview extends Thread {
     }
 
     private File mkFilePath(Context context){
-        File filePath = null;
+        File filePath;
                                                                                                     // Android SDK 버전이 29보다 낮은 경우
         if (Build.VERSION.SDK_INT < 29){
             filePath = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/poopy");
@@ -446,5 +514,14 @@ public class CameraPreview extends Thread {
             mCameraOpenCloseLock.release();
         }
     }
+
+    private Intent callResult(HashMap<String, Object> map){
+        Intent result = new Intent(mContext, ResultActivity.class);
+        result.putExtra("uri", poopy_uri);
+        result.putExtra("date", date);
+        result.putExtra("name", currentName);
+        return result;
+    }
+
 
 }
