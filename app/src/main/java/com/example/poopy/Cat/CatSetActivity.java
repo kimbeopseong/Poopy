@@ -129,7 +129,7 @@ public class CatSetActivity extends AppCompatActivity {
     public void onStart(){
         super.onStart();
         // firebase database와 Storage에서 정보를 받아와서 출력하는 코드 2020.06.08 BJH
-        DocumentReference docRef = db.collection("User").document(currentUserID).collection("Cat").document(document_id);
+        DocumentReference docRef = db.collection("Users").document(currentUserID).collection("Cat").document(document_id);
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -193,7 +193,7 @@ public class CatSetActivity extends AppCompatActivity {
             update.put("c_uri", cat_profile_download_url);
 
             // Add a new document with a generated ID
-            db.collection("User").document(currentUserID).collection("Cat").document(document_id)
+            db.collection("Users").document(currentUserID).collection("Cat").document(document_id)
                     .set(update, SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
