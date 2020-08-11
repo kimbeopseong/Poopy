@@ -63,10 +63,11 @@ public class AddCatActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_cat);
 
         db = FirebaseFirestore.getInstance();
+        mAuth = FirebaseAuth.getInstance();
         currentUserID = mAuth.getCurrentUser().getUid();
+
         //User 내부 컬렉션으로 Pet을 둠
         documentId = db.collection("Users").document(currentUserID).collection("Cat").document().getId();
-        mAuth = FirebaseAuth.getInstance();
 
         cvCat=(CircleImageView)findViewById(R.id.cvCat);
         etCatName = (EditText)findViewById(R.id.etCatName);
