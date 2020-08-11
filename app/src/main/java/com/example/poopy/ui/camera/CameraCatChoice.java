@@ -23,6 +23,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.Objects;
+
 public class CameraCatChoice extends Fragment implements CameraCatChoiceAdapter.OnListItemClick {
         private static final String TAG = "CAMERA CAT FRAGMENT";
 
@@ -42,7 +44,7 @@ public class CameraCatChoice extends Fragment implements CameraCatChoiceAdapter.
                 camera_catChoice = inflater.inflate(R.layout.fragment_cat_choice, container, false);
 
                 mAuth = FirebaseAuth.getInstance();
-                currintUID = mAuth.getCurrentUser().getUid();
+                currintUID = Objects.requireNonNull(mAuth.getCurrentUser()).getUid();
 
                 db = FirebaseFirestore.getInstance();
 
@@ -55,8 +57,8 @@ public class CameraCatChoice extends Fragment implements CameraCatChoiceAdapter.
                                 @Override
                                 public Cat parseSnapshot(@NonNull DocumentSnapshot snapshot) {
                                         Cat cat = snapshot.toObject(Cat.class);
-                                        cat.setCatName(snapshot.get("c_name").toString());
-                                        cat.setProfile(snapshot.get("c_uri").toString());
+                                        cat.setCatName(Objects.requireNonNull(snapshot.get("c_name")).toString());
+                                        cat.setProfile(Objects.requireNonNull(snapshot.get("c_uri")).toString());
                                         return cat;
                                 }
                         }).build();

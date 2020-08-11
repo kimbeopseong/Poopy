@@ -25,6 +25,8 @@ import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
+import java.util.Objects;
+
 public class ResultActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
@@ -49,7 +51,7 @@ public class ResultActivity extends AppCompatActivity {
         Button btn_ok = (Button) findViewById(R.id.res_ok);
 
         mAuth = FirebaseAuth.getInstance();
-        currentUID = mAuth.getCurrentUser().getUid();
+        currentUID = Objects.requireNonNull(mAuth.getCurrentUser()).getUid();
 
         Intent intent = getIntent();
         db = FirebaseFirestore.getInstance();
@@ -63,7 +65,7 @@ public class ResultActivity extends AppCompatActivity {
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                     if (task.isSuccessful()){
-                        for (QueryDocumentSnapshot document : task.getResult()){
+                        for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())){
                             setResult(document);
                         }
                     }
@@ -117,8 +119,8 @@ public class ResultActivity extends AppCompatActivity {
                                 .into(res_pic);
                     }
                 });
-        res_date.setText(document.get("date").toString());
-        res_stat.setText(document.get("stat").toString());
-        res_lv.setText(document.get("lv").toString());
+        res_date.setText(Objects.requireNonNull(document.get("date")).toString());
+        res_stat.setText(Objects.requireNonNull(document.get("stat")).toString());
+        res_lv.setText(Objects.requireNonNull(document.get("lv")).toString());
     }
 }
