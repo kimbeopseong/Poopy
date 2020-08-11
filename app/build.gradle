@@ -56,5 +56,4 @@ dependencies {
     // FirebaseUI for Cloud Firestore
     implementation 'com.firebaseui:firebase-ui-firestore:6.2.1'
     implementation 'android.arch.paging:runtime:2.1.1'
-
 }

@@ -65,7 +65,7 @@ public class AddCatActivity extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
         currentUserID = mAuth.getCurrentUser().getUid();
         //User 내부 컬렉션으로 Pet을 둠
-        documentId = db.collection("User").document(currentUserID).collection("Cat").document().getId();
+        documentId = db.collection("Users").document(currentUserID).collection("Cat").document().getId();
         mAuth = FirebaseAuth.getInstance();
 
         cvCat=(CircleImageView)findViewById(R.id.cvCat);
@@ -139,7 +139,7 @@ public class AddCatActivity extends AppCompatActivity {
             user.put("c_age", catAge);
 
             //User ID의 내부컬렉션 Cat에 도큐먼트 생성 2020.06.05 BJH
-            db.collection("User").document(currentUserID).collection("Cat").document(documentId).
+            db.collection("Users").document(currentUserID).collection("Cat").document(documentId).
                     set(user, SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
@@ -180,7 +180,7 @@ public class AddCatActivity extends AppCompatActivity {
                         cat_profile_download_url=task.getResult().toString();
                         HashMap<String, Object> update_cat_data=new HashMap<>();
                         update_cat_data.put("c_uri",cat_profile_download_url);
-                        db.collection("User").document(currentUserID).collection("Cat").document(documentId).
+                        db.collection("Users").document(currentUserID).collection("Cat").document(documentId).
                                 set(update_cat_data,SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
