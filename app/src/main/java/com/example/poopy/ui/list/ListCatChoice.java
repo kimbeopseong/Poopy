@@ -51,7 +51,7 @@ public class ListCatChoice extends Fragment implements ListCatChoiceAdapter.OnLi
 
         FirestorePagingOptions<Cat> options = new FirestorePagingOptions.Builder<Cat>()
                 .setLifecycleOwner(this)
-                .setQuery(db.collection("User").document(currentUID).collection("Cat").whereEqualTo("Name", true), config, new SnapshotParser<Cat>() {
+                .setQuery(db.collection("Users").document(currentUID).collection("Cat").whereEqualTo("Name", true), config, new SnapshotParser<Cat>() {
                     @NonNull
                     @Override
                     public Cat parseSnapshot(@NonNull DocumentSnapshot snapshot) {

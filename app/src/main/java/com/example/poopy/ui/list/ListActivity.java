@@ -47,7 +47,7 @@ public class ListActivity extends AppCompatActivity implements RecycleAdapter.On
         currentName = intent.getStringExtra("Name");
 
         db = FirebaseFirestore.getInstance();
-        poopData = db.collection("User").document(currentUID).collection("Cat").document(currentName).collection("PoopData");
+        poopData = db.collection("Users").document(currentUID).collection("Cat").document(currentName).collection("PoopData");
 
         //Query for read the dataset
         PagedList.Config config = new PagedList.Config.Builder().setInitialLoadSizeHint(10).setPageSize(3).build();

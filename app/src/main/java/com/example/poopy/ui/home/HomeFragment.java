@@ -77,7 +77,7 @@ public class HomeFragment extends Fragment {
     public void onStart(){
         super.onStart();
         FirestoreRecyclerOptions<Cat> options = new FirestoreRecyclerOptions.Builder<Cat>()
-                .setQuery(db.collection("User").document(currentUserId).collection("Cat"), Cat.class).build();
+                .setQuery(db.collection("Users").document(currentUserId).collection("Cat"), Cat.class).build();
         //FireRecyclerAdapter로 Firebase Cat 컬렉션의 Document를 읽어옴
         FirestoreRecyclerAdapter<Cat, CatViewHolder> catAdapter=
                 new FirestoreRecyclerAdapter<Cat, CatViewHolder>(options) {
@@ -88,7 +88,7 @@ public class HomeFragment extends Fragment {
                         docRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
                             @Override
                             public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
-                                db.collection("User").document(currentUserId).collection("Cat").document(cat_uid).get().
+                                db.collection("Users").document(currentUserId).collection("Cat").document(cat_uid).get().
                                         addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                     @Override
                                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
