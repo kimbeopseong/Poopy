@@ -56,7 +56,7 @@ public class ResultActivity extends AppCompatActivity {
         Intent intent = getIntent();
         db = FirebaseFirestore.getInstance();
         currentName = intent.getStringExtra("name");
-        poopData = db.collection("User").document(currentUID).collection("Pet").document(currentName).collection("PoopData");
+        poopData = db.collection("Users").document(currentUID).collection("Cat").document(currentName).collection("PoopData");
 
 //        try {
 //            date = intent.getStringExtra("date");

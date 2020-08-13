@@ -404,7 +404,7 @@ public class CameraPreview extends Thread {
                                     update_poopy_data.put("stat", stat);
                                     update_poopy_data.put("lv", lv);
 
-                                    db.collection("User").document(currentUID).collection("Pet").document(Objects.requireNonNull(intent.getExtras().get("Name")).toString())
+                                    db.collection("Users").document(currentUID).collection("Cat").document(Objects.requireNonNull(intent.getExtras().get("Name")).toString())
                                             .collection("PoopData").document().set(update_poopy_data, SetOptions.merge())
                                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                 @Override
