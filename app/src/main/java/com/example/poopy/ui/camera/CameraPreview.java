@@ -51,6 +51,9 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import org.opencv.android.Utils;
+import org.opencv.core.Mat;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -92,8 +95,14 @@ public class CameraPreview extends Thread {
     private Intent intent;
 
     private String poopy_uri, date, stat, lv, currentName;
+    private Mat image_input, image_output;
 
     private static final SparseIntArray ORIENTATIONS = new SparseIntArray(4);
+
+    static{
+        System.loadLibrary("opencv_java4");
+        System.loadLibrary("imageprocessing");
+    }
 
     static {
         ORIENTATIONS.append(Surface.ROTATION_0, 90);
@@ -337,11 +346,12 @@ public class CameraPreview extends Thread {
                         bitmap.createBitmap(bitmap, 0, 0, 640, 480);
                         resizingImage = Bitmap.createScaledBitmap(bitmap, 255, 255, true);
 
-                        /**
-                         *
-                         * resizingImage를 활용한 OpenCV 관련 함수 자리
-                         *
-                         * */
+                        //OpenCV imageprocessing(비트맵에서 Mat => Mat에서 다시 비트맵으로 변환)
+                        Bitmap tmp = resizingImage.copy(Bitmap.Config.ARGB_8888, true);
+                        image_input = new Mat();
+                        Utils.bitmapToMat(tmp, image_input);
+                        //고양이 배변 사진 전경 저장(foreground)
+                        Bitmap foreground = imageprocess_and_save();
 
                         ByteArrayOutputStream stream = new ByteArrayOutputStream();
                         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
@@ -521,6 +531,18 @@ public class CameraPreview extends Thread {
         result.putExtra("date", date);
         result.putExtra("name", currentName);
         return result;
+    }
+    public native void imageprocessing(long input_image, long ouput_image);
+
+    //call imageprocessing JNI function
+    public Bitmap imageprocess_and_save() {
+        if (image_output == null)
+            image_output = new Mat();
+        imageprocessing(image_input.getNativeObjAddr(), image_output.getNativeObjAddr());
+        Bitmap bitmapOutput = Bitmap.createBitmap(image_output.cols(), image_output.rows(), Bitmap.Config.ARGB_8888);
+        //image_output to Bitmap
+        Utils.matToBitmap(image_output, bitmapOutput);
+        return bitmapOutput;
     }
 
 
