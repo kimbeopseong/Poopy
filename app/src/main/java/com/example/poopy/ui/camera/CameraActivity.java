@@ -56,13 +56,8 @@ public class CameraActivity extends AppCompatActivity {
                     String permission = permissions[i];
                     int grantResult = grantResults[i];
                     if (permission.equals(Manifest.permission.CAMERA)){
-                        if (grantResult == PackageManager.PERMISSION_GRANTED){
-                            Log.d(TAG, "Preview Set !!!");
-                            cameraPreview.openCamera();
-                        } else {
-                            Toast.makeText(this, "카메라 권한이 필요합니다.", Toast.LENGTH_SHORT).show();
-                            finish();
-                        }
+                        String message = "카메라 권한이 필요합니다.";
+                        previewSet(grantResult, message);
                     }
                 }
                 break;
@@ -71,16 +66,21 @@ public class CameraActivity extends AppCompatActivity {
                     String permission = permissions[i];
                     int grantResult = grantResults[i];
                     if (permission.equals(Manifest.permission.WRITE_EXTERNAL_STORAGE)){
-                        if (grantResult == PackageManager.PERMISSION_GRANTED){
-                            Log.d(TAG, "Preview Set !!!");
-                            cameraPreview.openCamera();
-                        } else {
-                            Toast.makeText(this, "저장소 권한이 필요합니다.", Toast.LENGTH_SHORT).show();
-                            finish();
-                        }
+                        String message = "저장소 권한이 필요합니다.";
+                        previewSet(grantResult, message);
                     }
                 }
                 break;
+        }
+    }
+
+    private void previewSet(int grantResult, String message){
+        if (grantResult == PackageManager.PERMISSION_GRANTED){
+            Log.d(TAG, "Preview Set !!!");
+            cameraPreview.openCamera();
+        } else {
+            Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+            finish();
         }
     }
 

@@ -52,7 +52,7 @@ public class CameraCatChoice extends Fragment implements CameraCatChoiceAdapter.
 
                 FirestorePagingOptions<Cat> options = new FirestorePagingOptions.Builder<Cat>()
                         .setLifecycleOwner(this)
-                        .setQuery(db.collection("Users").document(currintUID).collection("Cat").whereEqualTo("Name", true), config, new SnapshotParser<Cat>() {
+                        .setQuery(db.collection("Users").document(currintUID).collection("Cat").whereEqualTo("c_name", true), config, new SnapshotParser<Cat>() {
                                 @NonNull
                                 @Override
                                 public Cat parseSnapshot(@NonNull DocumentSnapshot snapshot) {
