@@ -66,7 +66,7 @@ public class AddCatActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         currentUserID = mAuth.getCurrentUser().getUid();
 
-        //User 내부 컬렉션으로 Pet을 둠
+        //Users 내부 컬렉션으로 Pet을 둠
         documentId = db.collection("Users").document(currentUserID).collection("Cat").document().getId();
 
         cvCat=(CircleImageView)findViewById(R.id.cvCat);
