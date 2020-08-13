@@ -58,7 +58,37 @@ public class ResultActivity extends AppCompatActivity {
         currentName = intent.getStringExtra("name");
         poopData = db.collection("User").document(currentUID).collection("Pet").document(currentName).collection("PoopData");
 
-        try {
+//        try {
+//            date = intent.getStringExtra("date");
+//
+//            poopData.whereEqualTo("date",date).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+//                @Override
+//                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+//                    if (task.isSuccessful()){
+//                        for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())){
+//                            setResult(document);
+//                        }
+//                    }
+//                }
+//            });
+//        } catch (Exception e){
+//            itemId = intent.getStringExtra("itemId");
+//
+//            docRef = poopData.document(itemId);
+//            docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+//                @Override
+//                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+//                    if (task.isSuccessful()){
+//                        DocumentSnapshot document = task.getResult();
+//                        if (document.exists()){
+//                            setResult((QueryDocumentSnapshot) document);
+//                        }
+//                    }
+//                }
+//            });
+//        }
+
+        if (intent.getStringExtra("itemId").equals("")){
             date = intent.getStringExtra("date");
 
             poopData.whereEqualTo("date",date).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -71,7 +101,7 @@ public class ResultActivity extends AppCompatActivity {
                     }
                 }
             });
-        } catch (Exception e){
+        } else {
             itemId = intent.getStringExtra("itemId");
 
             docRef = poopData.document(itemId);
