@@ -36,7 +36,7 @@ public class ResultActivity extends AppCompatActivity {
     private CollectionReference poopData;
     private DocumentReference docRef;
 
-    private String currentUID, currentName, itemId, date;
+    private String currentUID, currentPID, currentName, itemId, date;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -55,40 +55,26 @@ public class ResultActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         db = FirebaseFirestore.getInstance();
+        currentPID = intent.getStringExtra("pid");
         currentName = intent.getStringExtra("name");
-        poopData = db.collection("Users").document(currentUID).collection("Cat").document(currentName).collection("PoopData");
+        poopData = db.collection("Users").document(currentUID).collection("Cat").document(currentPID).collection("PoopData");
 
-//        try {
-//            date = intent.getStringExtra("date");
-//
-//            poopData.whereEqualTo("date",date).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-//                @Override
-//                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-//                    if (task.isSuccessful()){
-//                        for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())){
-//                            setResult(document);
-//                        }
-//                    }
-//                }
-//            });
-//        } catch (Exception e){
-//            itemId = intent.getStringExtra("itemId");
-//
-//            docRef = poopData.document(itemId);
-//            docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-//                @Override
-//                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-//                    if (task.isSuccessful()){
-//                        DocumentSnapshot document = task.getResult();
-//                        if (document.exists()){
-//                            setResult((QueryDocumentSnapshot) document);
-//                        }
-//                    }
-//                }
-//            });
-//        }
+        try {
+            itemId = intent.getStringExtra("itemId");
 
-        if (intent.getStringExtra("itemId").equals("")){
+            docRef = poopData.document(itemId);
+            docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.isSuccessful()){
+                        DocumentSnapshot document = task.getResult();
+                        if (document.exists()){
+                            setResult(document);
+                        }
+                    }
+                }
+            });
+        } catch (Exception e){
             date = intent.getStringExtra("date");
 
             poopData.whereEqualTo("date",date).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -101,22 +87,37 @@ public class ResultActivity extends AppCompatActivity {
                     }
                 }
             });
-        } else {
-            itemId = intent.getStringExtra("itemId");
-
-            docRef = poopData.document(itemId);
-            docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                    if (task.isSuccessful()){
-                        DocumentSnapshot document = task.getResult();
-                        if (document.exists()){
-                            setResult((QueryDocumentSnapshot) document);
-                        }
-                    }
-                }
-            });
         }
+
+//        if (intent.getStringExtra("itemId").equals(null)){
+//            date = intent.getStringExtra("date");
+//
+//            poopData.whereEqualTo("date",date).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+//                @Override
+//                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+//                    if (task.isSuccessful()){
+//                        for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())){
+//                            setResult(document);
+//                        }
+//                    }
+//                }
+//            });
+//        } else {
+//            itemId = intent.getStringExtra("itemId");
+//
+//            docRef = poopData.document(itemId);
+//            docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+//                @Override
+//                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+//                    if (task.isSuccessful()){
+//                        DocumentSnapshot document = task.getResult();
+//                        if (document.exists()){
+//                            setResult(document);
+//                        }
+//                    }
+//                }
+//            });
+//        }
 
         btn_ok.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -127,7 +128,7 @@ public class ResultActivity extends AppCompatActivity {
 
     }
 
-    private void setResult(QueryDocumentSnapshot document){
+    private void setResult(DocumentSnapshot document){
         final String uri = document.get("poopy_uri").toString();
         Picasso.get().load(uri)
                 .networkPolicy(NetworkPolicy.OFFLINE)

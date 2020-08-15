@@ -88,7 +88,7 @@ public class CameraPreview extends Thread {
     private int deviceRotation;
 
     private StorageReference mStorageRef;
-    private String currentUID;
+    private String currentUID, currentPID;
     private FirebaseAuth mAuth;
 
     private FirebaseFirestore db;
@@ -127,7 +127,7 @@ public class CameraPreview extends Thread {
                                                                                                     // date = 파일 이름 될 예정. 현재 시각.
         long now = System.currentTimeMillis();
         Date mDate = new Date(now);
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy.MM.dd_hh:mm:ss");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy.MM.dd hh:mm:ss");
         date = simpleDateFormat.format(mDate);
 
         db = FirebaseFirestore.getInstance();
@@ -136,6 +136,7 @@ public class CameraPreview extends Thread {
         currentUID = Objects.requireNonNull(mAuth.getCurrentUser()).getUid();
 
         intent = CameraActivity.intent;
+        currentPID = intent.getStringExtra("pid");
         currentName = intent.getStringExtra("Name");
 
     }
@@ -404,7 +405,8 @@ public class CameraPreview extends Thread {
                                     update_poopy_data.put("stat", stat);
                                     update_poopy_data.put("lv", lv);
 
-                                    db.collection("Users").document(currentUID).collection("Cat").document(Objects.requireNonNull(intent.getExtras().get("Name")).toString())
+                                    db.collection("Users").document(currentUID).collection("Cat")
+                                            .document(currentPID)
                                             .collection("PoopData").document().set(update_poopy_data, SetOptions.merge())
                                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                 @Override
@@ -530,6 +532,7 @@ public class CameraPreview extends Thread {
         result.putExtra("uri", poopy_uri);
         result.putExtra("date", date);
         result.putExtra("name", currentName);
+        result.putExtra("pid", currentPID);
         return result;
     }
     public native void imageprocessing(long input_image, long ouput_image);

@@ -51,7 +51,7 @@ public class ListCatChoice extends Fragment implements ListCatChoiceAdapter.OnLi
 
         FirestorePagingOptions<Cat> options = new FirestorePagingOptions.Builder<Cat>()
                 .setLifecycleOwner(this)
-                .setQuery(db.collection("Users").document(currentUID).collection("Cat").whereEqualTo("c_name", true), config, new SnapshotParser<Cat>() {
+                .setQuery(db.collection("Users").document(currentUID).collection("Cat").whereGreaterThanOrEqualTo("c_age", 1), config, new SnapshotParser<Cat>() {
                     @NonNull
                     @Override
                     public Cat parseSnapshot(@NonNull DocumentSnapshot snapshot) {
@@ -100,7 +100,8 @@ public class ListCatChoice extends Fragment implements ListCatChoiceAdapter.OnLi
     public void onItemClick(DocumentSnapshot snapshot, int position) {
         Log.d("ITEM_CLICK", "Clicked an item: " + position + ", id:" + snapshot.getId());
         Intent intent = new Intent(this.getContext(), ListActivity.class);
-        intent.putExtra("Name", snapshot.getString("Name"));
+        intent.putExtra("Name", snapshot.getString("c_name"));
+        intent.putExtra("pid", snapshot.getId());
         startActivity(intent);
     }
 }

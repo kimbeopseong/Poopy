@@ -51,7 +51,6 @@ public class RecycleAdapter extends FirestorePagingAdapter<ListItem, RecycleAdap
 
     @Override
     public void onBindViewHolder(@NonNull RecycleAdapter.ViewHolder holder, int position, ListItem model) {
-        super.onBindViewHolder(holder, position);
         holder.date.setText(model.getDate());
         holder.stat.setText(model.getStat());
         holder.lv.setText(model.getLv());

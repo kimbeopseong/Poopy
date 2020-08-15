@@ -27,7 +27,7 @@ public class ListActivity extends AppCompatActivity implements RecycleAdapter.On
     private RecycleAdapter adapter;
     private RecyclerView.LayoutManager layoutManager;
 
-    private String currentUID, currentName;
+    private String currentUID, currentPID, currentName;
 
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
@@ -44,10 +44,11 @@ public class ListActivity extends AppCompatActivity implements RecycleAdapter.On
         currentUID = mAuth.getCurrentUser().getUid();
 
         Intent intent = getIntent();
+        currentPID = intent.getStringExtra("pid");
         currentName = intent.getStringExtra("Name");
 
         db = FirebaseFirestore.getInstance();
-        poopData = db.collection("Users").document(currentUID).collection("Cat").document(currentName).collection("PoopData");
+        poopData = db.collection("Users").document(currentUID).collection("Cat").document(currentPID).collection("PoopData");
 
         //Query for read the dataset
         PagedList.Config config = new PagedList.Config.Builder().setInitialLoadSizeHint(10).setPageSize(3).build();
@@ -83,6 +84,7 @@ public class ListActivity extends AppCompatActivity implements RecycleAdapter.On
         Intent intent = new Intent(this, ResultActivity.class);
         intent.putExtra("itemId", snapshot.getId());
         intent.putExtra("name", currentName);
+        intent.putExtra("pid", currentPID);
         startActivity(intent);
     }
 }

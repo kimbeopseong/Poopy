@@ -32,7 +32,7 @@ public class CameraCatChoice extends Fragment implements CameraCatChoiceAdapter.
         private RecyclerView catChoiceList;
 
         private FirebaseAuth mAuth;
-        private String currintUID;
+        private String currentUID;
         private FirebaseFirestore db;
 
         public CameraCatChoice(){}
@@ -44,7 +44,7 @@ public class CameraCatChoice extends Fragment implements CameraCatChoiceAdapter.
                 camera_catChoice = inflater.inflate(R.layout.fragment_cat_choice, container, false);
 
                 mAuth = FirebaseAuth.getInstance();
-                currintUID = Objects.requireNonNull(mAuth.getCurrentUser()).getUid();
+                currentUID = Objects.requireNonNull(mAuth.getCurrentUser()).getUid();
 
                 db = FirebaseFirestore.getInstance();
 
@@ -52,7 +52,7 @@ public class CameraCatChoice extends Fragment implements CameraCatChoiceAdapter.
 
                 FirestorePagingOptions<Cat> options = new FirestorePagingOptions.Builder<Cat>()
                         .setLifecycleOwner(this)
-                        .setQuery(db.collection("Users").document(currintUID).collection("Cat").whereEqualTo("c_name", true), config, new SnapshotParser<Cat>() {
+                        .setQuery(db.collection("Users").document(currentUID).collection("Cat").whereGreaterThanOrEqualTo("c_age", 1), config, new SnapshotParser<Cat>() {
                                 @NonNull
                                 @Override
                                 public Cat parseSnapshot(@NonNull DocumentSnapshot snapshot) {
@@ -75,9 +75,10 @@ public class CameraCatChoice extends Fragment implements CameraCatChoiceAdapter.
 
         @Override
         public void onItemClick(DocumentSnapshot snapshot, int position) {
-                Log.d("ITEM_CLICK", "Clicked an item: " + position + ", id: " + snapshot.getString("Name"));
+                Log.d("ITEM_CLICK", "Clicked an item: " + position + ", id: " + snapshot.getId());
                 Intent intent = new Intent(this.getContext(), CameraActivity.class);
-                intent.putExtra("Name", snapshot.getString("Name"));
+                intent.putExtra("Name", snapshot.getString("c_name"));
+                intent.putExtra("pid", snapshot.getId());
                 startActivity(intent);
         }
 
