@@ -27,13 +27,14 @@
 
         <TableRow
             android:layout_weight="1">
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:textSize="20dp"
-                android:text="날짜"/>
+                android:text="Date"
+                android:textSize="20dp" />
 
             <TextView
                 android:id="@+id/res_date"
@@ -47,51 +48,56 @@
 
         <TableRow
             android:layout_weight="1">
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:textSize="20dp"
-                android:text="상태"/>
+                android:text="Status"
+                android:textSize="20dp" />
+
             <TextView
                 android:id="@+id/res_stat"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="9"
                 android:gravity="center"
-                android:textSize="20dp"
-                android:text=""/>
+                android:text=""
+                android:textSize="20dp" />
         </TableRow>
 
         <TableRow
             android:layout_weight="1">
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:textSize="20dp"
-                android:text="경고lv"/>
+                android:text="Warning Lv"
+                android:textSize="20dp" />
+
             <TextView
                 android:id="@+id/res_lv"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="9"
+                android:layout_weight="10"
                 android:gravity="center"
-                android:textSize="20dp"
-                android:text=""/>
+                android:text=""
+                android:textSize="20dp" />
         </TableRow>
 
         <TableRow
             android:layout_weight="2">
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:textSize="20dp"
-                android:text="기타"/>
+                android:text="Etc"
+                android:textSize="20dp" />
             <TextView
                 android:id="@+id/res_else"
                 android:layout_width="match_parent"
@@ -107,12 +113,16 @@
         android:id="@+id/res_ok"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="17dp"
+        android:layout_marginRight="17dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/table"
-        android:text="확인"
+        android:text="OK"
+        android:textSize="24sp"
+        android:textAllCaps="false"
         android:textColor="#FFFFFF"
-        android:background="@color/colorPrimaryLight"/>
+        android:background="@drawable/buttons"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
