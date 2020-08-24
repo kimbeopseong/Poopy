@@ -14,8 +14,7 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvCat"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        >
+        android:layout_height="wrap_content">
 
     </androidx.recyclerview.widget.RecyclerView>
 
@@ -26,6 +25,7 @@
         android:layout_below="@id/rvCat"
         android:padding="10dp"
         app:srcCompat="@drawable/ic_etc"
+        android:drawbleTint="@color/cat_orange"
         tools:layout_editor_absoluteX="141dp"
         tools:layout_editor_absoluteY="279dp" />
 
@@ -37,7 +37,7 @@
         android:gravity="center|center_horizontal|center_vertical"
         android:text="Push to Add Cat"
         android:textSize="20sp"
-        android:textColor="#D2C4FF"
+        android:textColor="@color/cat_brown"
         android:layout_marginTop="5sp"/>
 
 </RelativeLayout>
