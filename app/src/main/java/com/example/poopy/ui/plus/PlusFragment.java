@@ -288,7 +288,7 @@ public class PlusFragment extends Fragment implements OnMapReadyCallback, Activi
 
         currentMarker = mMap.addMarker(markerOptions);
 
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(DEFAULT_LOCATION, 15));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(DEFAULT_LOCATION, 50));
     }
 
     public boolean checkPermission(){
