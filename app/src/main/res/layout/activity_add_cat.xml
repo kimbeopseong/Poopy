@@ -9,7 +9,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".AddCatActivity"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:background="@color/cat_white">
 
         <TextView
             android:id="@+id/tvAddCatTitle"
@@ -17,9 +18,11 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="ADD NEW CAT"
+            android:letterSpacing="-0.05"
+            android:fontFamily="@font/prstartk"
             android:textSize="24sp"
             android:layout_marginTop="15dp"
-            android:textColor="@color/colorPrimary" />
+            android:textColor="@color/colorPrimary"/>
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:layout_width="170dp"
@@ -29,7 +32,7 @@
             android:src="@drawable/default_profile_image"
             app:civ_border_width="1.2dp"
             app:civ_border_overlay="true"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="15dp"
             android:layout_centerHorizontal="true"/>
 
 
@@ -40,8 +43,8 @@
             android:textSize="20sp"
             android:layout_below="@+id/cvCat"
             android:hint="@string/cname"
-            android:drawableTint="@color/colorPrimary"
-            android:textColorHint="@color/colorPrimary"
+            android:drawableTint="@color/cat_drawbleTint"
+            android:textColorHint="@color/colorPrimaryDark"
             android:textColor="@color/colorPrimaryDark"
             android:inputType="text"
             android:background="@drawable/inputs"
@@ -58,8 +61,8 @@
             android:textSize="20sp"
             android:layout_below="@+id/etCatName"
             android:hint="@string/cage"
-            android:drawableTint="@color/colorPrimary"
-            android:textColorHint="@color/colorPrimary"
+            android:drawableTint="@color/cat_drawbleTint"
+            android:textColorHint="@color/colorPrimaryDark"
             android:textColor="@color/colorPrimaryDark"
             android:inputType="number"
             android:background="@drawable/inputs"
@@ -76,8 +79,8 @@
             android:textSize="20sp"
             android:layout_below="@+id/etCatAge"
             android:hint="@string/cspecies"
-            android:drawableTint="@color/colorPrimary"
-            android:textColorHint="@color/colorPrimary"
+            android:drawableTint="@color/cat_drawbleTint"
+            android:textColorHint="@color/colorPrimaryDark"
             android:textColor="@color/colorPrimaryDark"
             android:inputType="text"
             android:background="@drawable/inputs"
@@ -138,7 +141,7 @@
             android:layout_marginRight="17dp"
             android:textSize="24sp"
             android:textAllCaps="false"
-            android:textColor="@color/colorPrimary"
+            android:textColor="@color/cat_white"
             android:background="@drawable/buttons"
             android:layout_below="@+id/add_catRadio"
             />

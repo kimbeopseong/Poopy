@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".account.LoginActivity">
+    tools:context=".account.LoginActivity"
+    android:background="@color/cat_white">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -18,26 +19,22 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         >
-        <TextView
-            android:id="@+id/tvTitle"
+        <ImageView
+            android:id="@+id/imageView"
             android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:gravity="center"
-            android:text="POOPY"
-            android:textColor="#FFC4E1"
-            android:textStyle="bold"
-            android:textSize="30sp" />
+            android:layout_height="85dp"
+            app:srcCompat="@drawable/poopy_logo"/>
         <EditText
             android:id="@+id/etId"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/tvTitle"
             android:layout_marginLeft="17dp"
-            android:layout_marginTop="25dp"
+            android:layout_marginTop="40dp"
             android:layout_marginRight="17dp"
             android:background="@drawable/inputs"
             android:drawableStart="@drawable/email"
-            android:drawableTint="@color/colorPrimary"
+            android:drawableTint="@color/cat_drawbleTint"
             android:hint="@string/email"
             android:inputType="textEmailAddress"
             android:padding="4dp"
@@ -54,7 +51,7 @@
             android:layout_marginRight="17dp"
             android:background="@drawable/inputs"
             android:drawableStart="@drawable/password"
-            android:drawableTint="@color/colorPrimary"
+            android:drawableTint="@color/cat_drawbleTint"
             android:textColorHint="@color/colorPrimary"
             android:textColor="@color/colorPrimaryDark"
             android:hint="@string/password"
@@ -82,8 +79,9 @@
             android:padding="4dp"
             android:text="@string/login"
             android:textAllCaps="false"
-            android:textColor="@color/colorPrimary"
+            android:textColor="@color/cat_white"
             android:textSize="24sp" />
+
         <TextView
             android:id="@+id/linkSingUp"
             android:layout_width="match_parent"
@@ -94,7 +92,7 @@
             android:padding="5dp"
             android:textSize="18sp"
             android:text="New here? Create an account"
-            android:textColor="@color/colorAccent" />
+            android:textColor="@color/cat_brown" />
 
     </LinearLayout>
 

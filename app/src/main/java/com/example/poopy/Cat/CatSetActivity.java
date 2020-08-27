@@ -140,6 +140,7 @@ public class CatSetActivity extends AppCompatActivity {
                     catSpec=task.getResult().get("c_species").toString();
                     if(task.getResult().contains("c_uri")){
                         catUri=task.getResult().get("c_uri").toString();
+                        cat_profile_download_url = catUri;
                         Picasso.get().load(catUri)
                                 .networkPolicy(NetworkPolicy.OFFLINE)
                                 .placeholder(R.drawable.default_profile_image)
