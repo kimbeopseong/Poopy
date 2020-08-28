@@ -61,11 +61,12 @@ public class CatSetActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private StorageReference mStorageRef;
 
-    String catUri,catName,catSex,catAge,catSpec;
-    String cat_profile_download_url;
+    private String catUri,catName,catSex,catAge,catSpec;
+    private String cat_profile_download_url;
     private String currentUserID;
     private Intent cat_intent;
     private String document_id;
+    private Uri image=null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,35 +101,7 @@ public class CatSetActivity extends AppCompatActivity {
         currentUserID = mAuth.getCurrentUser().getUid();
         mStorageRef = FirebaseStorage.getInstance().getReference();
 
-        //cvUpdateCat 클릭 시 사진 변경을 위한 onActivtityResult 호출 2020.06.08 BJH
-        cvUpdateCat.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent in=new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(in, REQUEST_IMAGE_CODE);
-            }
-        });
-        btn_updateCat.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String catName = updateCatName.getText().toString();
-                int catAge = parseInt(updateCatAge.getText().toString());
-                String catSpecies = updateCatSpecies.getText().toString();
-                String catSex=null;
-                if(rbtnCMale.isChecked())
-                    catSex="수컷";
-                else if(rbtnCFemale.isChecked())
-                    catSex="암컷";
-                updateCat(catName, catAge, catSpecies, catSex, cat_profile_download_url);
-                Intent end_update = new Intent(CatSetActivity.this, MainActivity.class);
-                startActivity(end_update);
-            }
-        });
-    }
-
-    public void onStart(){
-        super.onStart();
-        // firebase database와 Storage에서 정보를 받아와서 출력하는 코드 2020.06.08 BJH
+        // firebase database와 Storage에서 정보를 받아와서 출력하는 코드 2020.08.28 BJH(수정)
         DocumentReference docRef = db.collection("Users").document(currentUserID).collection("Cat").document(document_id);
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -155,7 +128,7 @@ public class CatSetActivity extends AppCompatActivity {
                                         Picasso.get().load(catUri)
                                                 .placeholder(R.drawable.default_profile_image)
                                                 .error(R.drawable.default_profile_image)
-                                                .resize(0,180)
+                                                .resize(0,200)
                                                 .into(cvUpdateCat);
                                     }
                                 });
@@ -168,6 +141,32 @@ public class CatSetActivity extends AppCompatActivity {
                     else
                         rbtnCFemale.setChecked(true);
                 }
+            }
+        });
+
+        //cvUpdateCat 클릭 시 사진 변경을 위한 onActivtityResult 호출 2020.06.08 BJH
+        cvUpdateCat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent in=new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(in, REQUEST_IMAGE_CODE);
+            }
+        });
+
+        btn_updateCat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String catName = updateCatName.getText().toString();
+                int catAge = parseInt(updateCatAge.getText().toString());
+                String catSpecies = updateCatSpecies.getText().toString();
+                String catSex=null;
+                if(rbtnCMale.isChecked())
+                    catSex="수컷";
+                else if(rbtnCFemale.isChecked())
+                    catSex="암컷";
+                updateCat(catName, catAge, catSpecies, catSex, cat_profile_download_url);
+                Intent end_update = new Intent(CatSetActivity.this, MainActivity.class);
+                startActivity(end_update);
             }
         });
     }
@@ -201,40 +200,42 @@ public class CatSetActivity extends AppCompatActivity {
 
                 }
             });
+
+            //firebase에 해당 변경사항 반영 2020.08.28 BJH(수정)
+            if(image!=null){
+                final StorageReference riversRef = mStorageRef.child("Cats").child(currentUserID).child(document_id).child("profile.jpg");
+                UploadTask uploadTask=riversRef.putFile(image);
+                Task<Uri> uriTask=uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                    @Override
+                    public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                        if(!task.isSuccessful()){
+                            SweetToast.error(CatSetActivity.this, "Profile Photo Error: " + task.getException().getMessage());
+                        }
+                        cat_profile_download_url=riversRef.getDownloadUrl().toString();
+                        return riversRef.getDownloadUrl();
+                    }
+                }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Uri> task) {
+                        if(task.isSuccessful()){
+                            cat_profile_download_url=task.getResult().toString();
+                        }
+                    }
+                });
+            }
         }
     }
     //고양이 사진을 변경을 위한 코드 2020.06.08 BJH
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode==REQUEST_IMAGE_CODE){
-            final Uri image=data.getData();
+            image=data.getData();
             Log.d(TAG, "onActivityResult: "+image);
             Picasso.get().load(image)
                     .placeholder(R.drawable.default_profile_image)
                     .error(R.drawable.default_profile_image)
-                    .resize(0,100)
+                    .resize(0,200)
                     .into(cvUpdateCat);
-
-            final StorageReference riversRef = mStorageRef.child("Cats").child(currentUserID).child(document_id).child("profile.jpg");
-            UploadTask uploadTask=riversRef.putFile(image);
-            Task<Uri> uriTask=uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
-                @Override
-                public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
-                    if(!task.isSuccessful()){
-                        SweetToast.error(CatSetActivity.this, "Profile Photo Error: " + task.getException().getMessage());
-                    }
-                    cat_profile_download_url=riversRef.getDownloadUrl().toString();
-                    return riversRef.getDownloadUrl();
-                }
-            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-                @Override
-                public void onComplete(@NonNull Task<Uri> task) {
-                    if(task.isSuccessful()){
-                        cat_profile_download_url=task.getResult().toString();
-                    }
-                }
-            });
-
         }
     }
 }
