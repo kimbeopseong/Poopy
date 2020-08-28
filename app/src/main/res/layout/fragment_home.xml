@@ -25,7 +25,6 @@
         android:layout_below="@id/rvCat"
         android:padding="10dp"
         app:srcCompat="@drawable/ic_etc"
-        android:drawbleTint="@color/cat_orange"
         tools:layout_editor_absoluteX="141dp"
         tools:layout_editor_absoluteY="279dp" />
 
