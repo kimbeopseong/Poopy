@@ -145,7 +145,7 @@ public class CatSetActivity extends AppCompatActivity {
                                 .networkPolicy(NetworkPolicy.OFFLINE)
                                 .placeholder(R.drawable.default_profile_image)
                                 .error(R.drawable.default_profile_image)
-                                .resize(0,90)
+                                .resize(0,180)
                                 .into(cvUpdateCat, new Callback() {
                                     @Override
                                     public void onSuccess() {
@@ -155,7 +155,7 @@ public class CatSetActivity extends AppCompatActivity {
                                         Picasso.get().load(catUri)
                                                 .placeholder(R.drawable.default_profile_image)
                                                 .error(R.drawable.default_profile_image)
-                                                .resize(0,90)
+                                                .resize(0,180)
                                                 .into(cvUpdateCat);
                                     }
                                 });

@@ -54,7 +54,8 @@ public class AddCatActivity extends AppCompatActivity {
 
     private String currentUserID;
     private FirebaseAuth mAuth;
-    String cat_profile_download_url;
+    private String cat_profile_download_url;
+    private Uri image = null;
 
 
     @Override
@@ -139,6 +140,7 @@ public class AddCatActivity extends AppCompatActivity {
             user.put("c_species", catSpecies);
             user.put("c_age", catAge);
 
+
             //User ID의 내부컬렉션 Cat에 도큐먼트 생성 2020.06.05 BJH
             db.collection("Users").document(currentUserID).collection("Cat").document(documentId).
                     set(user, SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -147,6 +149,39 @@ public class AddCatActivity extends AppCompatActivity {
 
                 }
             });
+
+            if(image!=null){
+                //firebase storage에 사진 반영 2020.08.028 BJH(수정)
+                final StorageReference riversRef = mStorageRef.child("Cats").child(currentUserID).child(documentId).child("profile.jpg");
+                UploadTask uploadTask=riversRef.putFile(image);
+                Task<Uri> uriTask=uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                    @Override
+                    public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                        if(!task.isSuccessful()){
+                            SweetToast.error(AddCatActivity.this, "Profile Photo Error: " + task.getException().getMessage());
+                        }
+                        cat_profile_download_url=riversRef.getDownloadUrl().toString();
+                        return riversRef.getDownloadUrl();
+                    }
+                }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Uri> task) {
+                        //firebase database에 Cat사진 URI 추가 2020.08.028 BJH(수정)
+                        if(task.isSuccessful()){
+                            cat_profile_download_url=task.getResult().toString();
+                            HashMap<String, Object> update_cat_data=new HashMap<>();
+                            update_cat_data.put("c_uri",cat_profile_download_url);
+                            db.collection("Users").document(currentUserID).collection("Cat").document(documentId).
+                                    set(update_cat_data,SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                }
+                            });
+
+                        }
+                    }
+                });
+            }
         }
     }
 
@@ -154,44 +189,13 @@ public class AddCatActivity extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode==REQUEST_IMAGE_CODE){
-            final Uri image=data.getData();
+            image = data.getData();
             Log.d(TAG, "onActivityResult: "+image);
             Picasso.get().load(image)
                     .placeholder(R.drawable.default_profile_image)
                     .error(R.drawable.default_profile_image)
-                    .resize(0,90)
+                    .resize(0,180)
                     .into(cvCat);
-            //firebase storage에 사진 반영 2020.06.05 BJH
-            final StorageReference riversRef = mStorageRef.child("Cats").child(currentUserID).child(documentId).child("profile.jpg");
-            UploadTask uploadTask=riversRef.putFile(image);
-            Task<Uri> uriTask=uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
-                @Override
-                public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
-                    if(!task.isSuccessful()){
-                        SweetToast.error(AddCatActivity.this, "Profile Photo Error: " + task.getException().getMessage());
-                    }
-                    cat_profile_download_url=riversRef.getDownloadUrl().toString();
-                    return riversRef.getDownloadUrl();
-                }
-            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-                @Override
-                public void onComplete(@NonNull Task<Uri> task) {
-                    //firebase database에 Cat사진 URI 추가 2020.06.05 BJH
-                    if(task.isSuccessful()){
-                        cat_profile_download_url=task.getResult().toString();
-                        HashMap<String, Object> update_cat_data=new HashMap<>();
-                        update_cat_data.put("c_uri",cat_profile_download_url);
-                        db.collection("Users").document(currentUserID).collection("Cat").document(documentId).
-                                set(update_cat_data,SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                            }
-                        });
-
-                    }
-                }
-            });
-
         }
     }
 }
