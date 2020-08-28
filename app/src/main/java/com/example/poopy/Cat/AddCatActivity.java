@@ -194,7 +194,7 @@ public class AddCatActivity extends AppCompatActivity {
             Picasso.get().load(image)
                     .placeholder(R.drawable.default_profile_image)
                     .error(R.drawable.default_profile_image)
-                    .resize(0,180)
+                    .resize(0,200)
                     .into(cvCat);
         }
     }
