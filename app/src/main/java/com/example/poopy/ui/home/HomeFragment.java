@@ -25,16 +25,27 @@ import com.example.poopy.utils.Cat;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.functions.FirebaseFunctions;
+import com.google.firebase.functions.HttpsCallableReference;
+import com.google.firebase.functions.HttpsCallableResult;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -47,6 +58,9 @@ public class HomeFragment extends Fragment {
     private FirebaseAuth mAuth;
     private String currentUserId;
     private ImageView addCat;
+    private CollectionReference cats;
+    private FirebaseFunctions firebaseFunctions;
+    private StorageReference mStorageRef;
 
     String catUri,catName,catSex,catAge,catSpec;
 
@@ -59,6 +73,8 @@ public class HomeFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         db=FirebaseFirestore.getInstance();
+        firebaseFunctions = FirebaseFunctions.getInstance();
+        mStorageRef = FirebaseStorage.getInstance().getReference();
         mAuth=FirebaseAuth.getInstance();
         currentUserId=mAuth.getCurrentUser().getUid();
 
@@ -74,6 +90,8 @@ public class HomeFragment extends Fragment {
                 startActivity(intent);
             }
         });
+        cats = db.collection("Users").document(currentUserId).collection("Cat");
+
         return privateCatView;
     }
 
@@ -81,7 +99,7 @@ public class HomeFragment extends Fragment {
     public void onStart(){
         super.onStart();
         FirestoreRecyclerOptions<Cat> options = new FirestoreRecyclerOptions.Builder<Cat>()
-                .setQuery(db.collection("Users").document(currentUserId).collection("Cat"), Cat.class).build();
+                .setQuery(cats, Cat.class).build();
         //FireRecyclerAdapter로 Firebase Cat 컬렉션의 Document를 읽어옴
         FirestoreRecyclerAdapter<Cat, CatViewHolder> catAdapter=
                 new FirestoreRecyclerAdapter<Cat, CatViewHolder>(options) {
@@ -137,6 +155,24 @@ public class HomeFragment extends Fragment {
                                                     startActivity(setting);
                                                 }
                                             });
+                                            holder.itemView.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
+                                                @Override
+                                                public void onCreateContextMenu(ContextMenu contextMenu, View view, ContextMenu.ContextMenuInfo contextMenuInfo) {
+                                                    MenuItem delete = contextMenu.add(Menu.NONE, 1001, 1, "삭제");
+                                                    delete.setOnMenuItemClickListener(onDeleteItem);
+                                                }
+                                                private final MenuItem.OnMenuItemClickListener onDeleteItem = new MenuItem.OnMenuItemClickListener() {
+                                                    @Override
+                                                    public boolean onMenuItemClick(MenuItem menuItem) {
+                                                        deleteAtPath(cats.document(cat_uid).collection("PoopData").getPath());
+                                                        mStorageRef.child("Cats/"+currentUserId+"/"+cat_uid+"/profile.jpg").delete();
+                                                        cats.document(cat_uid).delete();
+                                                        notifyItemRemoved(getId());
+                                                        notifyItemRangeChanged(getId(), getItemCount());
+                                                        return true;
+                                                    }
+                                                };
+                                            });
                                         }
                                     }
                                 });
@@ -157,7 +193,7 @@ public class HomeFragment extends Fragment {
 
     }
     //RecyclerView ViewHolder
-    public static class CatViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener{
+    public class CatViewHolder extends RecyclerView.ViewHolder{
         CircleImageView ivPet;
         TextView catname,catsex,catspec,catage;
 
@@ -169,21 +205,27 @@ public class HomeFragment extends Fragment {
             catspec=itemView.findViewById(R.id.tvCSpe);
             catage=itemView.findViewById(R.id.tvCAge);
 
-            itemView.setOnCreateContextMenuListener(this);
         }
 
-        @Override
-        public void onCreateContextMenu(ContextMenu contextMenu, View view, ContextMenu.ContextMenuInfo contextMenuInfo) {
-            MenuItem delete = contextMenu.add(Menu.NONE, 1001, 1, "삭제");
-            delete.setOnMenuItemClickListener(onDeleteMenu);
-        }
+    }
 
-        private final MenuItem.OnMenuItemClickListener onDeleteMenu = new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem menuItem) {
+    public void deleteAtPath(String path){
+        Map<String, Object> data = new HashMap<>();
+        data.put("path", path);
 
-                return false;
-            }
-        };
+        HttpsCallableReference deleteFn = firebaseFunctions.getHttpsCallable("recursiveDelete");
+        deleteFn.call(data);
+//                .addOnSuccessListener(new OnSuccessListener<HttpsCallableResult>() {
+//                    @Override
+//                    public void onSuccess(HttpsCallableResult httpsCallableResult) {
+//
+//                    }
+//                })
+//                .addOnFailureListener(new OnFailureListener() {
+//                    @Override
+//                    public void onFailure(@NonNull Exception e) {
+//
+//                    }
+//                });
     }
 }

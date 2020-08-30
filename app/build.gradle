@@ -57,6 +57,9 @@ dependencies {
     implementation 'com.firebaseui:firebase-ui-firestore:6.2.1'
     implementation 'android.arch.paging:runtime:2.1.1'
 
+    //  Firebase Function
+    implementation 'com.google.firebase:firebase-functions:19.0.2'
+
     implementation 'com.google.android.gms:play-services-maps:17.0.0'
     implementation 'com.google.android.gms:play-services-location:17.0.0'
 
