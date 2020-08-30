@@ -1,7 +1,10 @@
 package com.example.poopy.ui.list;
 
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -19,13 +22,15 @@ import com.google.firebase.firestore.DocumentSnapshot;
 public class RecycleAdapter extends FirestorePagingAdapter<ListItem, RecycleAdapter.ViewHolder> {
 
     private OnListItemClick onListItemClick;
+    private OnMenuItemClick onMenuItemClick;
 
-    public RecycleAdapter(FirestorePagingOptions<ListItem> options, OnListItemClick onListItemClick){
+    public RecycleAdapter(FirestorePagingOptions<ListItem> options, OnListItemClick onListItemClick, OnMenuItemClick onMenuItemClick){
         super(options);
         this.onListItemClick = onListItemClick;
+        this.onMenuItemClick = onMenuItemClick;
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnCreateContextMenuListener, MenuItem.OnMenuItemClickListener {
 
         private TextView date, stat, lv;
 
@@ -37,16 +42,35 @@ public class RecycleAdapter extends FirestorePagingAdapter<ListItem, RecycleAdap
             lv = itemView.findViewById(R.id.daily_lv);
 
             itemView.setOnClickListener(this);
+            itemView.setOnCreateContextMenuListener(this);
         }
 
         @Override
         public void onClick(View view) {
             onListItemClick.onItemClick(getItem(getAdapterPosition()), getAdapterPosition());
         }
+
+        @Override
+        public void onCreateContextMenu(ContextMenu contextMenu, View view, ContextMenu.ContextMenuInfo contextMenuInfo) {
+            MenuItem delete = contextMenu.add(Menu.NONE, 1001, 1, "삭제");
+            delete.setOnMenuItemClickListener(this);
+        }
+
+        @Override
+        public boolean onMenuItemClick(MenuItem menuItem) {
+            onMenuItemClick.onMenuItemClick(getItem(getAdapterPosition()), getAdapterPosition());
+            notifyItemRemoved(getAdapterPosition());
+            notifyItemRangeChanged(getAdapterPosition(), getItemCount());
+            return true;
+        }
     }
 
     public interface OnListItemClick {
         void onItemClick(DocumentSnapshot snapshot, int position);
+    }
+
+    public interface OnMenuItemClick {
+        boolean onMenuItemClick(DocumentSnapshot snapshot, int position);
     }
 
     @Override

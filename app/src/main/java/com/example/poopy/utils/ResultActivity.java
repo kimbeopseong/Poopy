@@ -89,36 +89,6 @@ public class ResultActivity extends AppCompatActivity {
             });
         }
 
-//        if (intent.getStringExtra("itemId").equals(null)){
-//            date = intent.getStringExtra("date");
-//
-//            poopData.whereEqualTo("date",date).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-//                @Override
-//                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-//                    if (task.isSuccessful()){
-//                        for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())){
-//                            setResult(document);
-//                        }
-//                    }
-//                }
-//            });
-//        } else {
-//            itemId = intent.getStringExtra("itemId");
-//
-//            docRef = poopData.document(itemId);
-//            docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-//                @Override
-//                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-//                    if (task.isSuccessful()){
-//                        DocumentSnapshot document = task.getResult();
-//                        if (document.exists()){
-//                            setResult(document);
-//                        }
-//                    }
-//                }
-//            });
-//        }
-
         btn_ok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
