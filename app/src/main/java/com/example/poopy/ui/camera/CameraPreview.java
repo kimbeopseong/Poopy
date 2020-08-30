@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.ImageDecoder;
 import android.graphics.ImageFormat;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraAccessException;
@@ -25,6 +26,7 @@ import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.util.Size;
 import android.util.SparseIntArray;
@@ -353,6 +355,36 @@ public class CameraPreview extends Thread {
                         Utils.bitmapToMat(tmp, image_input);
                         //고양이 배변 사진 전경 저장(foreground)
                         Bitmap foreground = imageprocess_and_save();
+                        Bitmap foregroundcopy= foreground.copy(Bitmap.Config.ARGB_8888,true);
+
+                        if(foregroundcopy !=null){
+                            int w = foregroundcopy.getWidth();
+                            int h = foregroundcopy.getHeight();
+
+                            int[][] colorArray= new int[w][h];
+                            for (int i = 0; i < w; i++) {
+                                for(int j=0; j< h; j++){
+                                    int color= foregroundcopy.getPixel(i, j);
+                                    colorArray[i][j]=color;
+                                    //int n = (int) Long.parseLong("ffff8000", 16);
+                                }
+                            }
+
+                            boolean detect=false;
+
+                            for (int i =0; i< 255; i++){
+                                for(int y =0; y< 255; y++){
+                                    if(colorArray[i][y]>=-8388608 &&colorArray[i][y]<=-131072){
+                                        detect=true;
+                                    }
+                                }
+                            }
+                            //if(colorArray !=null){
+
+                            //}
+                        }else {
+                            //오류
+                        }
 
                         ByteArrayOutputStream stream = new ByteArrayOutputStream();
                         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
