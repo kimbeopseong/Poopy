@@ -88,6 +88,8 @@ public class CameraPreview extends Thread {
     private StreamConfigurationMap map;
 
     private int deviceRotation;
+    private String level="1";
+    private String status="None";
 
     private StorageReference mStorageRef;
     private String currentUID, currentPID;
@@ -379,6 +381,10 @@ public class CameraPreview extends Thread {
                                     }
                                 }
                             }
+                            if(detect==true){
+                                level="3";
+                                status="위급한 상태입니다";
+                            }
                             //if(colorArray !=null){
 
                             //}
@@ -428,14 +434,12 @@ public class CameraPreview extends Thread {
                             public void onComplete(@NonNull Task<Uri> task) {
                                 if (task.isSuccessful()){
                                     poopy_uri = Objects.requireNonNull(task.getResult()).toString();
-                                    stat = "Example stat";
-                                    lv = "1";
 
                                     final HashMap<String, Object> update_poopy_data = new HashMap<>();
                                     update_poopy_data.put("poopy_uri", poopy_uri);
                                     update_poopy_data.put("date", date);
-                                    update_poopy_data.put("stat", stat);
-                                    update_poopy_data.put("lv", lv);
+                                    update_poopy_data.put("stat", status);
+                                    update_poopy_data.put("lv", level);
 
                                     db.collection("Users").document(currentUID).collection("Cat")
                                             .document(currentPID)
