@@ -165,8 +165,8 @@ public class HomeFragment extends Fragment {
                                                     @Override
                                                     public boolean onMenuItemClick(MenuItem menuItem) {
                                                         deleteAtPath(cats.document(cat_uid).collection("PoopData").getPath());
-                                                        mStorageRef.child("Cats/"+currentUserId+"/"+cat_uid+"/profile.jpg").delete();
                                                         cats.document(cat_uid).delete();
+                                                        mStorageRef.child("Cats/"+currentUserId+"/"+cat_uid+"/profile.jpg").delete();
                                                         notifyItemRemoved(getId());
                                                         notifyItemRangeChanged(getId(), getItemCount());
                                                         return true;

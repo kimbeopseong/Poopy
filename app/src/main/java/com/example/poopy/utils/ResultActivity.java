@@ -36,7 +36,7 @@ public class ResultActivity extends AppCompatActivity {
     private CollectionReference poopData;
     private DocumentReference docRef;
 
-    private String currentUID, currentPID, currentName, itemId, date;
+    private String currentUID, currentPID, itemId, date;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -56,7 +56,6 @@ public class ResultActivity extends AppCompatActivity {
         Intent intent = getIntent();
         db = FirebaseFirestore.getInstance();
         currentPID = intent.getStringExtra("pid");
-        currentName = intent.getStringExtra("name");
         poopData = db.collection("Users").document(currentUID).collection("Cat").document(currentPID).collection("PoopData");
 
         try {

@@ -87,7 +87,6 @@ public class ListActivity extends AppCompatActivity implements RecycleAdapter.On
         Log.d("ITEM_CLICK", "Clicked an item: " + position + ", id:" + snapshot.getId());
         Intent intent = new Intent(this, ResultActivity.class);
         intent.putExtra("itemId", snapshot.getId());
-        intent.putExtra("name", currentName);
         intent.putExtra("pid", currentPID);
         startActivity(intent);
     }
