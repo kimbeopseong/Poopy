@@ -48,7 +48,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.Executor;
 
 import noman.googleplaces.NRPlaces;
 import noman.googleplaces.Place;
@@ -135,9 +134,9 @@ public class PlusFragment extends Fragment implements OnMapReadyCallback, Activi
             @Override
             public void onMapClick(LatLng latLng) {
                 Log.d(TAG, "onMapClick: ");
-                showPlaceInformation(currentPosition);
             }
         });
+        showPlaceInformation(currentPosition);
 
     }
 
