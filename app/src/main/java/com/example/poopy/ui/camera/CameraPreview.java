@@ -376,7 +376,7 @@ public class CameraPreview extends Thread {
                             int c=0;
                             for (int i =0; i< 255; i++){
                                 for(int y =0; y< 255; y++){
-                                    if(colorArray[i][y]>=-1372700 &&colorArray[i][y]<=-131072){
+                                    if(colorArray[i][y]>=-3800000 &&colorArray[i][y]<=-131072){
                                         c++;
                                     }
                                 }
