@@ -134,9 +134,10 @@ public class PlusFragment extends Fragment implements OnMapReadyCallback, Activi
             @Override
             public void onMapClick(LatLng latLng) {
                 Log.d(TAG, "onMapClick: ");
+                showPlaceInformation(currentPosition);
             }
         });
-        showPlaceInformation(currentPosition);
+
 
     }
 
