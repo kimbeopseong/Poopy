@@ -2,6 +2,7 @@ package com.example.poopy.ui.home;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -164,11 +165,15 @@ public class HomeFragment extends Fragment {
                                                 private final MenuItem.OnMenuItemClickListener onDeleteItem = new MenuItem.OnMenuItemClickListener() {
                                                     @Override
                                                     public boolean onMenuItemClick(MenuItem menuItem) {
-                                                        deleteAtPath(cats.document(cat_uid).collection("PoopData").getPath());
-                                                        cats.document(cat_uid).delete();
-                                                        mStorageRef.child("Cats/"+currentUserId+"/"+cat_uid+"/profile.jpg").delete();
-                                                        notifyItemRemoved(getId());
-                                                        notifyItemRangeChanged(getId(), getItemCount());
+                                                            deleteAtPath(cats.document(cat_uid).collection("PoopData").getPath());
+                                                            cats.document(cat_uid).delete();
+                                                            mStorageRef.child("Cats/"+currentUserId+"/"+cat_uid+"/profile.jpg").delete();
+                                                            notifyItemRemoved(getId());
+                                                            try {
+                                                                notifyItemRangeChanged(getId(), getItemCount());
+                                                            }catch (Exception e){
+                                                                notifyItemRangeChanged(getId(), 0);
+                                                            }
                                                         return true;
                                                     }
                                                 };
@@ -215,17 +220,5 @@ public class HomeFragment extends Fragment {
 
         HttpsCallableReference deleteFn = firebaseFunctions.getHttpsCallable("recursiveDelete");
         deleteFn.call(data);
-//                .addOnSuccessListener(new OnSuccessListener<HttpsCallableResult>() {
-//                    @Override
-//                    public void onSuccess(HttpsCallableResult httpsCallableResult) {
-//
-//                    }
-//                })
-//                .addOnFailureListener(new OnFailureListener() {
-//                    @Override
-//                    public void onFailure(@NonNull Exception e) {
-//
-//                    }
-//                });
     }
 }
