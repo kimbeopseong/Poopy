@@ -363,27 +363,38 @@ public class CameraPreview extends Thread {
                             int w = foregroundcopy.getWidth();
                             int h = foregroundcopy.getHeight();
 
-                            int[][] colorArray= new int[w][h];
+                            long[][] colorArray= new long[w][h];
                             for (int i = 0; i < w; i++) {
                                 for(int j=0; j< h; j++){
-                                    int color= foregroundcopy.getPixel(i, j);
+                                    long color= foregroundcopy.getPixel(i, j);
                                     colorArray[i][j]=color;
                                     //int n = (int) Long.parseLong("ffff8000", 16);
                                 }
                             }
 
                             boolean detect=false;
-
+                            int c=0;
                             for (int i =0; i< 255; i++){
                                 for(int y =0; y< 255; y++){
-                                    if(colorArray[i][y]>=-8388608 &&colorArray[i][y]<=-131072){
-                                        detect=true;
+                                    if(colorArray[i][y]>=-1372700 &&colorArray[i][y]<=-131072){
+                                        c++;
                                     }
                                 }
                             }
-                            if(detect==true){
-                                level="3";
+                            if(c>=1000){
+                                level="4";
                                 status="위급한 상태입니다";
+                            }
+                            else if(c>=400){
+                                level="3";
+                                status="고양이 건강이 좋지 않습니다";
+                            } else if (c >= 100) {
+                                level="2";
+                                status="주위를 기울여야 합니다.";
+                            }
+                            else {
+                                level="1";
+                                status="건강합니다";
                             }
                             //if(colorArray !=null){
 
