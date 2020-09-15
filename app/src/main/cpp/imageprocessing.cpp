@@ -20,11 +20,11 @@ Java_com_example_poopy_ui_camera_CameraPreview_imageprocessing(JNIEnv *env, jobj
     int x, y, w, h;
     height = img_input.rows;
     width = img_input.cols;
-    x = int(width*0.25);
-    y = int(height*0.25);
-    w = int(width*0.5);
-    h = int(width*0.5);
-    Rect rectangle(x, y, x+w, y+h);
+    x = int(width*0.20);
+    y = int(height*0.20);
+    w = int(width*0.40);
+    h = int(height*0.30);
+    Rect rectangle(x, y,h+y-1,x+w-1);
     cvtColor(img_input , img_input , COLOR_BGRA2BGR);
     grabCut (img_input, grabcut, rectangle, bgModel, fgModel,5,GC_INIT_WITH_RECT);
     compare(grabcut, GC_PR_FGD, grabcut, CMP_EQ);
