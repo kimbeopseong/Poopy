@@ -357,7 +357,10 @@ public class CameraPreview extends Thread {
                         Utils.bitmapToMat(tmp, image_input);
                         //고양이 배변 사진 전경 저장(foreground)
                         Bitmap foreground = imageprocess_and_save();
+
+                        SaveBitmapToFileCache(foreground, mkFilePath(mContext).toString(), String.format("%s.jpg", date));
                         Bitmap foregroundcopy= foreground.copy(Bitmap.Config.ARGB_8888,true);
+
 
                         if(foregroundcopy !=null){
                             int w = foregroundcopy.getWidth();
@@ -582,6 +585,33 @@ public class CameraPreview extends Thread {
         result.putExtra("pid", currentPID);
         return result;
     }
+
+    public static void SaveBitmapToFileCache(Bitmap bitmap, String strFilePath, String filename) {
+        File file = new File(strFilePath);
+
+        if (!file.exists())
+            file.mkdirs();
+
+        File fileCacheItem = new File(strFilePath + filename);
+        OutputStream out = null;
+
+        try {
+            fileCacheItem.createNewFile();
+            out = new FileOutputStream(fileCacheItem);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        } finally {
+            try {
+                out.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     public native void imageprocessing(long input_image, long ouput_image);
 
     //call imageprocessing JNI function
