@@ -23,10 +23,10 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-public class ListActivity extends AppCompatActivity implements RecycleAdapter.OnListItemClick, RecycleAdapter.OnMenuItemClick{
+public class ListActivity extends AppCompatActivity implements RecycleAdapter.OnListItemClick, RecycleAdapter.OnItemLongClick{
 
     private RecyclerView recyclerView;
-    private RecycleAdapter adapter;
+    public static RecycleAdapter adapter;
     private RecyclerView.LayoutManager layoutManager;
 
     private String currentUID, currentPID, currentName;
@@ -53,6 +53,13 @@ public class ListActivity extends AppCompatActivity implements RecycleAdapter.On
         db = FirebaseFirestore.getInstance();
         poopData = db.collection("Users").document(currentUID).collection("Cat").document(currentPID).collection("PoopData");
         mStorageRef = FirebaseStorage.getInstance().getReference();
+        recyclerView = (RecyclerView) findViewById(R.id.recycler);
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
 
         //Query for read the dataset
         PagedList.Config config = new PagedList.Config.Builder().setInitialLoadSizeHint(10).setPageSize(3).build();
@@ -74,12 +81,17 @@ public class ListActivity extends AppCompatActivity implements RecycleAdapter.On
 
         adapter = new RecycleAdapter(options, this, this);
 
-        recyclerView = (RecyclerView) findViewById(R.id.recycler);
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
         recyclerView.scrollToPosition(0);
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     @Override
@@ -92,10 +104,14 @@ public class ListActivity extends AppCompatActivity implements RecycleAdapter.On
     }
 
     @Override
-    public boolean onMenuItemClick(DocumentSnapshot snapshot, int position) {
-        String fileName = snapshot.getString("date");
-        poopData.document(snapshot.getId()).delete();
-        mStorageRef.child("Feeds/" + currentUID + "/" + currentName + "/" + fileName + ".jpg").delete();
-        return true;
+    public void onLongClick(DocumentSnapshot snapshot, int position) {
+        Log.d("ITEM_LONG_CLICK", "LONG Clicked an item: " + position + ", id:" + snapshot.getId());
+        Intent intent = new Intent(this, DeleteActivity.class);
+        intent.putExtra("currentUser", currentUID);
+        intent.putExtra("currentPID", currentPID);
+        intent.putExtra("currentCatName", currentName);
+        intent.putExtra("itemId", snapshot.getId());
+        intent.putExtra("imgName", snapshot.getString("date"));
+        startActivity(intent);
     }
 }

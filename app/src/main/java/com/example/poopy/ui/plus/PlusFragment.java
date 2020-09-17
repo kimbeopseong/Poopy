@@ -403,7 +403,7 @@ public class PlusFragment extends Fragment implements OnMapReadyCallback, Activi
         }
 
         new NRPlaces.Builder().listener(this).key("AIzaSyBg1okwRcErPujK20kIouAh4VAGWOx6Pw0")
-                .latlng(location.latitude, location.longitude).radius(500).type(PlaceType.VETERINARY_CARE).build().execute();
+                .latlng(location.latitude, location.longitude).radius(3000).type(PlaceType.VETERINARY_CARE).build().execute();
     }
 
     @Override
