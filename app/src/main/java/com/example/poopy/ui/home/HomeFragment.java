@@ -60,8 +60,6 @@ public class HomeFragment extends Fragment {
     private String currentUserId;
     private ImageView addCat;
     private CollectionReference cats;
-    private FirebaseFunctions firebaseFunctions;
-    private StorageReference mStorageRef;
 
     String catUri,catName,catSex,catAge,catSpec;
 
@@ -74,8 +72,6 @@ public class HomeFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         db=FirebaseFirestore.getInstance();
-        firebaseFunctions = FirebaseFunctions.getInstance();
-        mStorageRef = FirebaseStorage.getInstance().getReference();
         mAuth=FirebaseAuth.getInstance();
         currentUserId=mAuth.getCurrentUser().getUid();
 
@@ -165,15 +161,10 @@ public class HomeFragment extends Fragment {
                                                 private final MenuItem.OnMenuItemClickListener onDeleteItem = new MenuItem.OnMenuItemClickListener() {
                                                     @Override
                                                     public boolean onMenuItemClick(MenuItem menuItem) {
-                                                            deleteAtPath(cats.document(cat_uid).collection("PoopData").getPath());
-                                                            cats.document(cat_uid).delete();
-                                                            mStorageRef.child("Cats/"+currentUserId+"/"+cat_uid+"/profile.jpg").delete();
-                                                            notifyItemRemoved(getId());
-                                                            try {
-                                                                notifyItemRangeChanged(getId(), getItemCount());
-                                                            }catch (Exception e){
-                                                                notifyItemRangeChanged(getId(), 0);
-                                                            }
+                                                        Intent intent = new Intent(getContext(), CatDeleteActivity.class);
+                                                        intent.putExtra("currentUID", currentUserId);
+                                                        intent.putExtra("pickedPID", cat_uid);
+                                                        startActivity(intent);
                                                         return true;
                                                     }
                                                 };
@@ -214,11 +205,4 @@ public class HomeFragment extends Fragment {
 
     }
 
-    public void deleteAtPath(String path){
-        Map<String, Object> data = new HashMap<>();
-        data.put("path", path);
-
-        HttpsCallableReference deleteFn = firebaseFunctions.getHttpsCallable("recursiveDelete");
-        deleteFn.call(data);
-    }
 }

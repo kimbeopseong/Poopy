@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.4.1)
 
-set(pathPROJECT C:/Users/kbs54/AndroidStudioProjects/last) #본인 프로젝트의 절대경로로 수정할 것
+set(pathPROJECT C:/Users/leech/Desktop/program/study/poopy/poopy/Poopy) #본인 프로젝트의 절대경로로 수정할 것
 set(pathOPENCV ${pathPROJECT}/sdk)
 set(pathLIBOPENCV_JAVA ${pathOPENCV}/native/libs/${ANDROID_ABI}/libopencv_java4.so)
 

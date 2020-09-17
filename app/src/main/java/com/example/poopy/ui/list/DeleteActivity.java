@@ -1,4 +1,4 @@
-package com.example.poopy.utils;
+package com.example.poopy.ui.list;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -11,8 +11,6 @@ import android.widget.Button;
 import androidx.annotation.Nullable;
 
 import com.example.poopy.R;
-import com.example.poopy.ui.list.ListActivity;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -20,11 +18,9 @@ import com.google.firebase.storage.StorageReference;
 public class DeleteActivity extends Activity {
 
     FirebaseFirestore db;
-    private static final String TAG = "DeleteActivity";
     private Intent intent;
     private String currentUID, currentPID, currentCatName, itemId, imgName;
     private Button delete, cancel;
-    private CollectionReference poopData;
     private StorageReference mStorageRef;
 
     @Override
@@ -44,7 +40,6 @@ public class DeleteActivity extends Activity {
         imgName = intent.getStringExtra("imgName");
 
         db = FirebaseFirestore.getInstance();
-        poopData = db.collection("Users").document(currentUID).collection("Cat").document(currentPID).collection("PoopData");
         mStorageRef = FirebaseStorage.getInstance().getReference();
 
     }
