@@ -8,6 +8,8 @@ import android.view.Window;
 import android.widget.Button;
 
 import androidx.annotation.Nullable;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.example.poopy.R;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -27,6 +29,7 @@ public class CatDeleteActivity extends Activity {
     private Button delete, cancel;
     private StorageReference mStorageRef;
     private FirebaseFunctions firebaseFunctions;
+    private HomeFragment homeFragment;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -44,6 +47,8 @@ public class CatDeleteActivity extends Activity {
         db = FirebaseFirestore.getInstance();
         firebaseFunctions = FirebaseFunctions.getInstance();
         mStorageRef = FirebaseStorage.getInstance().getReference();
+
+        homeFragment = HomeFragment.getInstance();
     }
 
     @Override
@@ -56,6 +61,7 @@ public class CatDeleteActivity extends Activity {
                 deleteAtPath(db.collection("Users").document(currentUID).collection("Cat").document(pickedPID).collection("PoopData").getPath());
                 db.collection("Users").document(currentUID).collection("Cat").document(pickedPID).delete();
                 mStorageRef.child("Cats/"+currentUID+"/"+pickedPID+"/profile.jpg").delete();
+                homeRefresh();
                 finish();
             }
         });
@@ -74,5 +80,11 @@ public class CatDeleteActivity extends Activity {
 
         HttpsCallableReference deleteFn = firebaseFunctions.getHttpsCallable("recursiveDelete");
         deleteFn.call(data);
+    }
+
+    private void homeRefresh(){
+        FragmentManager manager = homeFragment.getChildFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        transaction.detach(homeFragment).attach(homeFragment).commit();
     }
 }

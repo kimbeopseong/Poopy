@@ -60,6 +60,7 @@ public class HomeFragment extends Fragment {
     private String currentUserId;
     private ImageView addCat;
     private CollectionReference cats;
+    private static HomeFragment homeFragment;
 
     String catUri,catName,catSex,catAge,catSpec;
 
@@ -68,6 +69,7 @@ public class HomeFragment extends Fragment {
     public static HomeFragment newInstance(){
         return new HomeFragment();
     }
+    public static HomeFragment getInstance() { return homeFragment;}
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -88,6 +90,7 @@ public class HomeFragment extends Fragment {
             }
         });
         cats = db.collection("Users").document(currentUserId).collection("Cat");
+        homeFragment = HomeFragment.this;
 
         return privateCatView;
     }
