@@ -384,19 +384,19 @@ public class CameraPreview extends Thread {
                             int c=0;
                             for (int i =0; i< 255; i++){
                                 for(int y =0; y< 255; y++){
-                                    if(colorArray[i][y]>=-3800000 &&colorArray[i][y]<=-131072){
+                                    if(colorArray[i][y]>=-3700000 &&colorArray[i][y]<=-130000){
                                         c++;
                                     }
                                 }
                             }
-                            if(c>=1000){
+                            if(c>=10000){
                                 level="4";
                                 status="위급한 상태입니다";
                             }
-                            else if(c>=400){
+                            else if(c>=6000){
                                 level="3";
                                 status="고양이 건강이 좋지 않습니다";
-                            } else if (c >= 100) {
+                            } else if (c >= 1000) {
                                 level="2";
                                 status="주위를 기울여야 합니다.";
                             }
