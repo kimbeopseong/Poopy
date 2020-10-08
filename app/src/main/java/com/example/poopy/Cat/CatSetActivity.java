@@ -229,13 +229,17 @@ public class CatSetActivity extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode==REQUEST_IMAGE_CODE){
-            image=data.getData();
-            Log.d(TAG, "onActivityResult: "+image);
-            Picasso.get().load(image)
-                    .placeholder(R.drawable.default_profile_image)
-                    .error(R.drawable.default_profile_image)
-                    .resize(0,200)
-                    .into(cvUpdateCat);
+            try {
+                image = data.getData();
+                Log.d(TAG, "onActivityResult: "+image);
+                Picasso.get().load(image)
+                        .placeholder(R.drawable.default_profile_image)
+                        .error(R.drawable.default_profile_image)
+                        .resize(0,200)
+                        .into(cvUpdateCat);
+            }catch(Exception e){
+                Log.e(TAG, "onActivityResult: "+e.getMessage());
+            }
         }
     }
 }

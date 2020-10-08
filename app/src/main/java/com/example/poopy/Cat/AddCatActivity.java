@@ -112,7 +112,7 @@ public class AddCatActivity extends AppCompatActivity {
                 String catSex=null;
                 if(rbtnCMale.isChecked())
                     catSex="수컷";
-                else if(rbtnCFemale.isChecked())
+                else
                     catSex="암컷";
                 createNewCat(catName, catAge, catSpecies, catSex);
                 Intent intent = new Intent(AddCatActivity.this, MainActivity.class);
@@ -189,13 +189,17 @@ public class AddCatActivity extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode==REQUEST_IMAGE_CODE){
-            image = data.getData();
-            Log.d(TAG, "onActivityResult: "+image);
-            Picasso.get().load(image)
-                    .placeholder(R.drawable.default_profile_image)
-                    .error(R.drawable.default_profile_image)
-                    .resize(0,200)
-                    .into(cvCat);
+            try{
+                image = data.getData();
+                Log.d(TAG, "onActivityResult: "+image);
+                Picasso.get().load(image)
+                        .placeholder(R.drawable.default_profile_image)
+                        .error(R.drawable.default_profile_image)
+                        .resize(0,200)
+                        .into(cvCat);
+            }catch(Exception e){
+                Log.e(TAG, "onActivityResult: "+e.getMessage());
+            }
         }
     }
 }
