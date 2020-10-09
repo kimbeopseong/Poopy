@@ -61,7 +61,7 @@ public class CatDeleteActivity extends Activity {
                 deleteAtPath(db.collection("Users").document(currentUID).collection("Cat").document(pickedPID).collection("PoopData").getPath());
                 db.collection("Users").document(currentUID).collection("Cat").document(pickedPID).delete();
                 mStorageRef.child("Cats/"+currentUID+"/"+pickedPID+"/profile.jpg").delete();
-                homeRefresh();
+                homeFragment.homeRefresh();
                 finish();
             }
         });
@@ -82,9 +82,9 @@ public class CatDeleteActivity extends Activity {
         deleteFn.call(data);
     }
 
-    private void homeRefresh(){
-        FragmentManager manager = homeFragment.getChildFragmentManager();
-        FragmentTransaction transaction = manager.beginTransaction();
-        transaction.detach(homeFragment).attach(homeFragment).commit();
-    }
+//    private void homeRefresh(){
+//        FragmentManager manager = homeFragment.getChildFragmentManager();
+//        FragmentTransaction transaction = manager.beginTransaction();
+//        transaction.detach(homeFragment).attach(homeFragment).commit();
+//    }
 }
