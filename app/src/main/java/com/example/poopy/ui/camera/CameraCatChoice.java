@@ -97,14 +97,13 @@ public class CameraCatChoice extends Fragment implements CameraCatChoiceAdapter.
                         int column = position % spanCount;
 
                         if (column < 1){
-                                outRect.right = spacing - (column + 1) * spacing / spanCount;
+                            outRect.right = spacing - (column + 1) * spacing / spanCount;
                         } else {
-                                outRect.right = 0;
+                            outRect.right = 0;
                         }
 
                         outRect.bottom = spacing;
 
-                        super.getItemOffsets(outRect, view, parent, state);
                 }
         }
 }
