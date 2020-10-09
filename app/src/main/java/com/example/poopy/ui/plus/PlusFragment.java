@@ -129,7 +129,7 @@ public class PlusFragment extends Fragment implements OnMapReadyCallback, Activi
         }
 
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
-        mMap.animateCamera(CameraUpdateFactory.zoomTo(50));
+//        mMap.animateCamera(CameraUpdateFactory.zoomTo(50));
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
@@ -154,7 +154,7 @@ public class PlusFragment extends Fragment implements OnMapReadyCallback, Activi
                 currentPosition = new LatLng(location.getLatitude(), location.getLongitude());
 
                 String markerTitle = getCurrentAddress(currentPosition);
-                String markerSnippet = "위도: " + String.valueOf(location.getLatitude()) + ", 경도: " + String.valueOf(location.getLongitude());
+                String markerSnippet = "현재 위치";
                 Log.d(TAG, "onLocationResult: " + markerSnippet);
 
                 setCurrentLocation(location, markerTitle, markerSnippet);
