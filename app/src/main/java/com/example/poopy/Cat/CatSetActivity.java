@@ -171,7 +171,7 @@ public class CatSetActivity extends AppCompatActivity {
         });
     }
 
-    private void updateCat(String catName, int catAge, String catSpecies, String catSex, String catPhoto){
+    private void updateCat(final String catName, final int catAge, final String catSpecies, final String catSex, String catPhoto){
         if (TextUtils.isEmpty(catName)) {
             SweetToast.error(CatSetActivity.this, "Your cat's name is required.");
         } else if (catAge == 0) {
@@ -184,23 +184,6 @@ public class CatSetActivity extends AppCompatActivity {
             SweetToast.warning(CatSetActivity.this, "Select your cat's sex");
         }
         else {
-
-            Map<String, Object> update = new HashMap<>();
-            update.put("c_name", catName);
-            update.put("c_sex", catSex);
-            update.put("c_species", catSpecies);
-            update.put("c_age", catAge);
-            update.put("c_uri", cat_profile_download_url);
-
-            // Add a new document with a generated ID
-            db.collection("Users").document(currentUserID).collection("Cat").document(document_id)
-                    .set(update, SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
-
-                }
-            });
-
             //firebase에 해당 변경사항 반영 2020.08.28 BJH(수정)
             if(image!=null){
                 final StorageReference riversRef = mStorageRef.child("Cats").child(currentUserID).child(document_id).child("profile.jpg");
@@ -219,10 +202,29 @@ public class CatSetActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<Uri> task) {
                         if(task.isSuccessful()){
                             cat_profile_download_url=task.getResult().toString();
+
+                            Map<String, Object> update = new HashMap<>();
+                            update.put("c_name", catName);
+                            update.put("c_sex", catSex);
+                            update.put("c_species", catSpecies);
+                            update.put("c_age", catAge);
+                            update.put("c_uri", cat_profile_download_url);
+
+                            Log.d(TAG, "updateCat: " + cat_profile_download_url);
+
+                            // Add a new document with a generated ID
+                            db.collection("Users").document(currentUserID).collection("Cat").document(document_id)
+                                    .set(update, SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+
+                                }
+                            });
                         }
                     }
                 });
             }
+
         }
     }
     //고양이 사진을 변경을 위한 코드 2020.06.08 BJH
