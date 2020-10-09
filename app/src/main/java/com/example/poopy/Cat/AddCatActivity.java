@@ -115,8 +115,6 @@ public class AddCatActivity extends AppCompatActivity {
                 else
                     catSex="암컷";
                 createNewCat(catName, catAge, catSpecies, catSex);
-                Intent intent = new Intent(AddCatActivity.this, MainActivity.class);
-                startActivity(intent);
             }
         });
     }
@@ -133,8 +131,8 @@ public class AddCatActivity extends AppCompatActivity {
         } else if (TextUtils.isEmpty(catSex)) {
             SweetToast.warning(AddCatActivity.this, "Select your cat's sex");
         } else {
-            final Map<String, Object> user = new HashMap<>();
 
+            final Map<String, Object> user = new HashMap<>();
             user.put("c_name", catName);
             user.put("c_sex", catSex);
             user.put("c_species", catSpecies);
@@ -175,6 +173,8 @@ public class AddCatActivity extends AppCompatActivity {
                                     set(update_cat_data,SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
+                                    Intent intent = new Intent(AddCatActivity.this, MainActivity.class);
+                                    startActivity(intent);
                                 }
                             });
 
