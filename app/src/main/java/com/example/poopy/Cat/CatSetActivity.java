@@ -109,6 +109,7 @@ public class CatSetActivity extends AppCompatActivity {
                 if(task.isSuccessful()){
                     catName=task.getResult().get("c_name").toString();
                     catSex=task.getResult().get("c_sex").toString();
+                    Log.d(TAG, "onCreate: " + catSex);
                     catAge=task.getResult().get("c_age").toString();
                     catSpec=task.getResult().get("c_species").toString();
                     if(task.getResult().contains("c_uri")){
@@ -136,7 +137,7 @@ public class CatSetActivity extends AppCompatActivity {
                     updateCatName.setText(catName);
                     updateCatAge.setText(catAge);
                     updateCatSpecies.setText(catSpec);
-                    if(catSex== "수컷")
+                    if(catSex.equals("수컷"))
                         rbtnCMale.setChecked(true);
                     else
                         rbtnCFemale.setChecked(true);
