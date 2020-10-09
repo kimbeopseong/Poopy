@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.ImageDecoder;
 import android.graphics.ImageFormat;
+import android.graphics.Matrix;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
@@ -19,6 +20,7 @@ import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.StreamConfigurationMap;
+import android.media.ExifInterface;
 import android.media.Image;
 import android.media.ImageReader;
 import android.net.Uri;
@@ -40,6 +42,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 
 import com.example.poopy.utils.ResultActivity;
 import com.google.android.gms.tasks.Continuation;
@@ -101,6 +104,8 @@ public class CameraPreview extends Thread {
     private String poopy_uri, date, stat, lv, currentName;
     private Mat image_input, image_output;
 
+    private  String mCurrentPhotoPath;
+
     private static final SparseIntArray ORIENTATIONS = new SparseIntArray(4);
 
     static{
@@ -131,7 +136,7 @@ public class CameraPreview extends Thread {
                                                                                                     // date = 파일 이름 될 예정. 현재 시각.
         long now = System.currentTimeMillis();
         Date mDate = new Date(now);
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy.MM.dd hh:mm:ss");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
         date = simpleDateFormat.format(mDate);
 
         db = FirebaseFirestore.getInstance();
@@ -330,7 +335,7 @@ public class CameraPreview extends Thread {
 
             String pic_name = String.format("%s.jpg", date);
             final File file = new File(path, pic_name);
-            final Uri uri = Uri.fromFile(file);
+            mCurrentPhotoPath = file.getAbsolutePath();
 
             ImageReader.OnImageAvailableListener readerListener = new ImageReader.OnImageAvailableListener() {
                 @Override
@@ -410,6 +415,7 @@ public class CameraPreview extends Thread {
                         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
                         bytes = stream.toByteArray();
                         save(bytes);
+
                     } catch (FileNotFoundException e){
                         e.printStackTrace();
                     } catch (IOException e){
@@ -430,8 +436,18 @@ public class CameraPreview extends Thread {
                         output = new FileOutputStream(file);
                         output.write(bytes);
 
+                        File rotatingFile = new File(mCurrentPhotoPath);
+                        Bitmap image = MediaStore.Images.Media
+                                .getBitmap(mContext.getContentResolver(), Uri.fromFile(rotatingFile));
+
+                        ExifInterface exif = new ExifInterface(mCurrentPhotoPath);
+                        int exifOrientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED);
+                        int exifDegree = exifOrientationToDegrees(exifOrientation);
+                        image = rotate(image, exifDegree);
+                        Uri rotateUri = getImageUri(mContext, image);
+
                         final StorageReference riversRef = mStorageRef.child("Feeds").child(currentUID).child(Objects.requireNonNull(intent.getExtras().get("Name")).toString()).child(date+".jpg");
-                        UploadTask uploadTask = riversRef.putFile(uri);
+                        UploadTask uploadTask = riversRef.putFile(rotateUri);
 
                         Task<Uri> uriTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                             @Override
@@ -475,7 +491,7 @@ public class CameraPreview extends Thread {
 
                     } catch(Exception e){
                         e.getMessage();
-                        Log.e(TAG, "세이브 시도 중 문제가 발생하였습니다 !!!");
+                        Log.e(TAG, "세이브 시도 중 문제가 발생하였습니다 !!!" + e.getMessage());
                     } finally {
                         if (null != output){
                             try{
@@ -529,7 +545,7 @@ public class CameraPreview extends Thread {
         File filePath;
                                                                                                     // Android SDK 버전이 29보다 낮은 경우
         if (Build.VERSION.SDK_INT < 29){
-            filePath = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/poopy");
+            filePath = new File(Environment.getExternalStorageDirectory().getAbsolutePath(),"poopy");
             Log.e(TAG, "android SDK_INT < 29 !!!");
             if (!filePath.exists())
                 try{
@@ -541,7 +557,7 @@ public class CameraPreview extends Thread {
         }
                                                                                                     // Android SDK 버전이 29보다 높거나 같은 경우
         else {
-            filePath = new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), "poopy");
+            filePath = new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)+"/poopy");
             Log.e(TAG, "android SDK_INT >= 29 !!!");
             if (!filePath.mkdirs())
                 Log.e(TAG, "Failed to create file path !!!");
@@ -625,5 +641,44 @@ public class CameraPreview extends Thread {
         return bitmapOutput;
     }
 
+    public int exifOrientationToDegrees(int exifOrientation) {
+        if(exifOrientation == ExifInterface.ORIENTATION_ROTATE_90) {
+            return 90;
+        }
+        else if(exifOrientation == ExifInterface.ORIENTATION_ROTATE_180) {
+            return 180;
+        }
+        else if(exifOrientation == ExifInterface.ORIENTATION_ROTATE_270) {
+            return 270;
+        }
+        else{
+            return 90;
+        }
+    }
 
+    public Bitmap rotate(Bitmap bitmap, int degrees) {
+        if(degrees != 0 && bitmap != null) {
+            Matrix m = new Matrix();
+            m.setRotate(degrees, (float) bitmap.getWidth() / 2,
+                    (float) bitmap.getHeight() / 2);
+            try {
+                Bitmap converted = Bitmap.createBitmap(bitmap, 0, 0,
+                        bitmap.getWidth(), bitmap.getHeight(), m, true);
+                if(bitmap != converted) {
+                    bitmap.recycle();
+                    bitmap = converted;
+                }
+            } catch(OutOfMemoryError ex) {
+                // 메모리가 부족하여 회전을 시키지 못할 경우 그냥 원본을 반환
+            }
+        }
+        return bitmap;
+    }
+
+    public static Uri getImageUri(Context context, Bitmap inImage) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(context.getContentResolver(), inImage, "Title", null);
+        return Uri.parse(path);
+    }
 }
