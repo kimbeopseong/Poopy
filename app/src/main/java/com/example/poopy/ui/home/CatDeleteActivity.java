@@ -3,18 +3,25 @@ package com.example.poopy.ui.home;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.poopy.R;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.functions.FirebaseFunctions;
 import com.google.firebase.functions.HttpsCallableReference;
+import com.google.firebase.functions.HttpsCallableResult;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -58,11 +65,8 @@ public class CatDeleteActivity extends Activity {
         delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                deleteAtPath(db.collection("Users").document(currentUID).collection("Cat").document(pickedPID).collection("PoopData").getPath());
-                db.collection("Users").document(currentUID).collection("Cat").document(pickedPID).delete();
-                mStorageRef.child("Cats/"+currentUID+"/"+pickedPID+"/profile.jpg").delete();
-                homeFragment.homeRefresh();
-                finish();
+                deleteAtPath(db.collection("Users").document(currentUID)
+                        .collection("Cat").document(pickedPID).collection("PoopData").getPath());
             }
         });
         cancel.setOnClickListener(new View.OnClickListener(){
@@ -79,12 +83,61 @@ public class CatDeleteActivity extends Activity {
         data.put("path", path);
 
         HttpsCallableReference deleteFn = firebaseFunctions.getHttpsCallable("recursiveDelete");
-        deleteFn.call(data);
+        deleteFn.call(data)
+                .addOnSuccessListener(new OnSuccessListener<HttpsCallableResult>() {
+                @Override
+                public void onSuccess(HttpsCallableResult httpsCallableResult) {
+                    mStorageRef.child("Cats/"+currentUID+"/"+pickedPID+"/profile.jpg").delete()
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        db.collection("Users").document(currentUID).collection("Cat").document(pickedPID).delete()
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                homeRefresh();
+                                finish();
+                            }
+                        });
+                    }
+                    });
+                }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        e.printStackTrace();
+                        Log.e("CatDeleteFail", e.getMessage());
+
+                        mStorageRef.child("Cats/"+currentUID+"/"+pickedPID+"/profile.jpg").delete()
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        db.collection("Users").document(currentUID).collection("Cat").document(pickedPID).delete()
+                                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<Void> task) {
+                                                        homeRefresh();
+                                                        finish();
+                                                    }
+                                                });
+                                    }
+                                });
+
+                        finish();
+                    }
+                });;
     }
 
-//    private void homeRefresh(){
-//        FragmentManager manager = homeFragment.getChildFragmentManager();
-//        FragmentTransaction transaction = manager.beginTransaction();
+    public void homeRefresh() {
+//        FragmentTransaction transaction = homeFragment.getParentFragmentManager().beginTransaction();
 //        transaction.detach(homeFragment).attach(homeFragment).commit();
-//    }
+
+        Fragment currentFrag = homeFragment.getActivity().getSupportFragmentManager().findFragmentById(R.id.relativeLayout);
+        FragmentTransaction fragmentTransaction = currentFrag.getParentFragmentManager().beginTransaction();
+        fragmentTransaction.detach(currentFrag);
+        fragmentTransaction.attach(currentFrag);
+        fragmentTransaction.commit();
+    }
+
 }

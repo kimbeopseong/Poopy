@@ -124,7 +124,7 @@ public class HomeFragment extends Fragment {
                                             if(task.getResult().contains("c_uri")){
                                                 catUri=task.getResult().get("c_uri").toString();
                                                 Picasso.get().load(catUri)
-                                                        .networkPolicy(NetworkPolicy.OFFLINE)
+//                                                        .networkPolicy(NetworkPolicy.OFFLINE)
                                                         .placeholder(R.drawable.default_profile_image)
                                                         .error(R.drawable.default_profile_image)
                                                         .resize(0,90)
@@ -208,11 +208,6 @@ public class HomeFragment extends Fragment {
 
         }
 
-    }
-
-    public void homeRefresh(){
-        FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
-        transaction.detach(this).attach(this).commit();
     }
 
 }
