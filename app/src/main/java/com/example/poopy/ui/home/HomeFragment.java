@@ -143,6 +143,25 @@ public class HomeFragment extends Fragment {
                                                             }
                                                         });
                                             }
+                                            else{
+                                                Picasso.get().load(R.drawable.default_profile_image)
+                                                        .placeholder(R.drawable.default_profile_image)
+                                                        .error(R.drawable.default_profile_image)
+                                                        .resize(0,90)
+                                                        .into(holder.ivPet, new Callback() {
+                                                            @Override
+                                                            public void onSuccess() {
+                                                            }
+                                                            @Override
+                                                            public void onError(Exception e) {
+                                                                Picasso.get().load(R.drawable.default_profile_image)
+                                                                        .placeholder(R.drawable.default_profile_image)
+                                                                        .error(R.drawable.default_profile_image)
+                                                                        .resize(0,90)
+                                                                        .into(holder.ivPet);
+                                                            }
+                                                        });
+                                            }
                                             holder.catname.setText(catName);
                                             holder.catage.setText(catAge+"살");
                                             holder.catspec.setText(catSpec);

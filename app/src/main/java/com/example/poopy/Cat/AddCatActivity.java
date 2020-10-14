@@ -177,10 +177,13 @@ public class AddCatActivity extends AppCompatActivity {
                                     startActivity(intent);
                                 }
                             });
-
                         }
                     }
                 });
+            }
+            else{
+                Intent intent = new Intent(AddCatActivity.this, MainActivity.class);
+                startActivity(intent);
             }
         }
     }
