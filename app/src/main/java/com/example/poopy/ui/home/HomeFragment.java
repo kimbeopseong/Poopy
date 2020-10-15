@@ -59,19 +59,17 @@ public class HomeFragment extends Fragment {
     private RecyclerView catsList;
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
+    private FragmentTransaction transaction;
     private String currentUserId;
     private ImageView addCat;
     private CollectionReference cats;
-    private static HomeFragment homeFragment;
+    private static FirestoreRecyclerAdapter<Cat, CatViewHolder> catAdapter;
 
     String catUri,catName,catSex,catAge,catSpec;
 
     public HomeFragment(){ }
 
-    public static HomeFragment newInstance(){
-        return new HomeFragment();
-    }
-    public static HomeFragment getInstance() { return homeFragment;}
+    public static FirestoreRecyclerAdapter<Cat, CatViewHolder> getCatAdapter() { return catAdapter; }
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -92,7 +90,6 @@ public class HomeFragment extends Fragment {
             }
         });
         cats = db.collection("Users").document(currentUserId).collection("Cat");
-        homeFragment = HomeFragment.this;
 
         return privateCatView;
     }
@@ -103,7 +100,7 @@ public class HomeFragment extends Fragment {
         FirestoreRecyclerOptions<Cat> options = new FirestoreRecyclerOptions.Builder<Cat>()
                 .setQuery(cats, Cat.class).build();
         //FireRecyclerAdapter로 Firebase Cat 컬렉션의 Document를 읽어옴
-        FirestoreRecyclerAdapter<Cat, CatViewHolder> catAdapter=
+        catAdapter=
                 new FirestoreRecyclerAdapter<Cat, CatViewHolder>(options) {
                     @Override
                     protected void onBindViewHolder(@NonNull final CatViewHolder holder, int position, @NonNull Cat model) {
@@ -117,63 +114,67 @@ public class HomeFragment extends Fragment {
                                     @Override
                                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                                         if(task.isSuccessful()){
-                                            catName=task.getResult().get("c_name").toString();
-                                            catSex=task.getResult().get("c_sex").toString();
-                                            catAge=task.getResult().get("c_age").toString();
-                                            catSpec=task.getResult().get("c_species").toString();
-                                            if(task.getResult().contains("c_uri")){
-                                                catUri=task.getResult().get("c_uri").toString();
-                                                Picasso.get().load(catUri)
+                                            try {
+                                                catName=task.getResult().get("c_name").toString();
+                                                catSex=task.getResult().get("c_sex").toString();
+                                                catAge=task.getResult().get("c_age").toString();
+                                                catSpec=task.getResult().get("c_species").toString();
+                                                if(task.getResult().contains("c_uri")){
+                                                    catUri=task.getResult().get("c_uri").toString();
+                                                    Picasso.get().load(catUri)
 //                                                        .networkPolicy(NetworkPolicy.OFFLINE)
-                                                        .placeholder(R.drawable.default_profile_image)
-                                                        .error(R.drawable.default_profile_image)
-                                                        .resize(0,90)
-                                                        .into(holder.ivPet, new Callback() {
-                                                            @Override
-                                                            public void onSuccess() {
-                                                            }
+                                                            .placeholder(R.drawable.default_profile_image)
+                                                            .error(R.drawable.default_profile_image)
+                                                            .resize(0,90)
+                                                            .into(holder.ivPet, new Callback() {
+                                                                @Override
+                                                                public void onSuccess() {
+                                                                }
 
-                                                            @Override
-                                                            public void onError(Exception e) {
-                                                                Picasso.get().load(catUri)
-                                                                        .placeholder(R.drawable.default_profile_image)
-                                                                        .error(R.drawable.default_profile_image)
-                                                                        .resize(0,90)
-                                                                        .into(holder.ivPet);
-                                                            }
-                                                        });
-                                            }
-                                            holder.catname.setText(catName);
-                                            holder.catage.setText(catAge+"살");
-                                            holder.catspec.setText(catSpec);
-                                            holder.catsex.setText(catSex);
+                                                                @Override
+                                                                public void onError(Exception e) {
+                                                                    Picasso.get().load(catUri)
+                                                                            .placeholder(R.drawable.default_profile_image)
+                                                                            .error(R.drawable.default_profile_image)
+                                                                            .resize(0,90)
+                                                                            .into(holder.ivPet);
+                                                                }
+                                                            });
+                                                }
+                                                holder.catname.setText(catName);
+                                                holder.catage.setText(catAge+"살");
+                                                holder.catspec.setText(catSpec);
+                                                holder.catsex.setText(catSex);
 
-                                            //View Item 클릭리스너, 클릭 시 CatSetActivity에서 해당 고양이 정보 수정
-                                            holder.itemView.setOnClickListener(new View.OnClickListener() {
-                                                @Override
-                                                public void onClick(View v) {
-                                                    Intent setting =new Intent(getActivity(), CatSetActivity.class);
-                                                    setting.putExtra("cat_document_id", cat_uid);
-                                                    startActivity(setting);
-                                                }
-                                            });
-                                            holder.itemView.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
-                                                @Override
-                                                public void onCreateContextMenu(ContextMenu contextMenu, View view, ContextMenu.ContextMenuInfo contextMenuInfo) {
-                                                    MenuItem delete = contextMenu.add(Menu.NONE, 1001, 1, "삭제");
-                                                    delete.setOnMenuItemClickListener(onDeleteItem);
-                                                }
-                                                private final MenuItem.OnMenuItemClickListener onDeleteItem = new MenuItem.OnMenuItemClickListener() {
+                                                //View Item 클릭리스너, 클릭 시 CatSetActivity에서 해당 고양이 정보 수정
+                                                holder.itemView.setOnClickListener(new View.OnClickListener() {
                                                     @Override
-                                                    public boolean onMenuItemClick(MenuItem menuItem) {
-                                                        Intent intent = new Intent(getContext(), CatDeleteActivity.class);
-                                                        intent.putExtra("currentUID", currentUserId);
-                                                        intent.putExtra("pickedPID", cat_uid);
-                                                        startActivity(intent);
-                                                        return true;
+                                                    public void onClick(View v) {
+                                                        Intent setting =new Intent(getActivity(), CatSetActivity.class);
+                                                        setting.putExtra("cat_document_id", cat_uid);
+                                                        startActivity(setting);
                                                     }
-                                                };
-                                            });
+                                                });
+                                                holder.itemView.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
+                                                    @Override
+                                                    public void onCreateContextMenu(ContextMenu contextMenu, View view, ContextMenu.ContextMenuInfo contextMenuInfo) {
+                                                        MenuItem delete = contextMenu.add(Menu.NONE, 1001, 1, "삭제");
+                                                        delete.setOnMenuItemClickListener(onDeleteItem);
+                                                    }
+                                                    private final MenuItem.OnMenuItemClickListener onDeleteItem = new MenuItem.OnMenuItemClickListener() {
+                                                        @Override
+                                                        public boolean onMenuItemClick(MenuItem menuItem) {
+                                                            Intent intent = new Intent(getContext(), CatDeleteActivity.class);
+                                                            intent.putExtra("currentUID", currentUserId);
+                                                            intent.putExtra("pickedPID", cat_uid);
+                                                            startActivity(intent);
+                                                            return true;
+                                                        }
+                                                    };
+                                                });
+                                            } catch (Exception e) {
+                                                refreshHome();
+                                            }
                                         }
                                     }
                                 });
@@ -193,6 +194,12 @@ public class HomeFragment extends Fragment {
         catAdapter.startListening();
 
     }
+
+    public void refreshHome() {
+        transaction = getParentFragmentManager().beginTransaction();
+        transaction.detach(this).attach(this).commit();
+    }
+
     //RecyclerView ViewHolder
     public class CatViewHolder extends RecyclerView.ViewHolder{
         CircleImageView ivPet;

@@ -14,6 +14,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.poopy.R;
+import com.example.poopy.utils.Cat;
+import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -36,7 +38,7 @@ public class CatDeleteActivity extends Activity {
     private Button delete, cancel;
     private StorageReference mStorageRef;
     private FirebaseFunctions firebaseFunctions;
-    private HomeFragment homeFragment;
+    private FirestoreRecyclerAdapter<Cat, HomeFragment.CatViewHolder> catAdapter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -55,7 +57,7 @@ public class CatDeleteActivity extends Activity {
         firebaseFunctions = FirebaseFunctions.getInstance();
         mStorageRef = FirebaseStorage.getInstance().getReference();
 
-        homeFragment = HomeFragment.getInstance();
+        catAdapter = HomeFragment.getCatAdapter();
     }
 
     @Override
@@ -84,60 +86,46 @@ public class CatDeleteActivity extends Activity {
 
         HttpsCallableReference deleteFn = firebaseFunctions.getHttpsCallable("recursiveDelete");
         deleteFn.call(data)
-                .addOnSuccessListener(new OnSuccessListener<HttpsCallableResult>() {
+            .addOnSuccessListener(new OnSuccessListener<HttpsCallableResult>() {
                 @Override
                 public void onSuccess(HttpsCallableResult httpsCallableResult) {
                     mStorageRef.child("Cats/"+currentUID+"/"+pickedPID+"/profile.jpg").delete()
-                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        db.collection("Users").document(currentUID).collection("Cat").document(pickedPID).delete()
                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
-                                homeRefresh();
-                                finish();
+                                db.collection("Users").document(currentUID).collection("Cat").document(pickedPID).delete()
+                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            finish();
+                                        }
+                                    });
                             }
                         });
-                    }
-                    });
                 }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        e.printStackTrace();
-                        Log.e("CatDeleteFail", e.getMessage());
+            })
+            .addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    e.printStackTrace();
+                    Log.e("CatDeleteFail", e.getMessage());
 
-                        mStorageRef.child("Cats/"+currentUID+"/"+pickedPID+"/profile.jpg").delete()
-                                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-                                        db.collection("Users").document(currentUID).collection("Cat").document(pickedPID).delete()
-                                                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                    @Override
-                                                    public void onComplete(@NonNull Task<Void> task) {
-                                                        homeRefresh();
-                                                        finish();
-                                                    }
-                                                });
-                                    }
-                                });
+                    mStorageRef.child("Cats/"+currentUID+"/"+pickedPID+"/profile.jpg").delete()
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                db.collection("Users").document(currentUID).collection("Cat").document(pickedPID).delete()
+                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            finish();
+                                        }
+                                    });
+                            }
+                        });
 
-                        finish();
-                    }
-                });;
-    }
-
-    public void homeRefresh() {
-//        FragmentTransaction transaction = homeFragment.getParentFragmentManager().beginTransaction();
-//        transaction.detach(homeFragment).attach(homeFragment).commit();
-
-        Fragment currentFrag = homeFragment.getActivity().getSupportFragmentManager().findFragmentById(R.id.relativeLayout);
-        FragmentTransaction fragmentTransaction = currentFrag.getParentFragmentManager().beginTransaction();
-        fragmentTransaction.detach(currentFrag);
-        fragmentTransaction.attach(currentFrag);
-        fragmentTransaction.commit();
+                }
+            });
     }
 
 }
