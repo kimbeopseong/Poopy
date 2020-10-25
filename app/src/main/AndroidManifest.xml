@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.poopy">
+    package="com.mally.poopy">
 
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
@@ -19,27 +19,27 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyAQ7vcMZuUPaPFiSV6sFtdc2Nk8UCMXyPM" />
 
-        <activity android:name=".Cat.CatSetActivity" />
-        <activity android:name=".Cat.AddCatActivity" />
-        <activity android:name=".account.SignActivity" />
-        <activity android:name=".ui.camera.CameraActivity"/>
-        <activity android:name=".utils.ResultActivity"/>
-        <activity android:name=".ui.list.ListActivity"/>
-        <activity android:name=".account.LoginActivity">
+        <activity android:name="com.mally.poopy.Cat.CatSetActivity" />
+        <activity android:name="com.mally.poopy.Cat.AddCatActivity" />
+        <activity android:name="com.mally.poopy.account.SignActivity" />
+        <activity android:name="com.mally.poopy.ui.camera.CameraActivity"/>
+        <activity android:name="com.mally.poopy.utils.ResultActivity"/>
+        <activity android:name="com.mally.poopy.ui.list.ListActivity"/>
+        <activity android:name="com.mally.poopy.account.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".MainActivity"
+            android:name="com.mally.poopy.MainActivity"
             android:label="@string/app_name">
         </activity>
         <activity
-            android:name=".ui.home.CatDeleteActivity"
+            android:name="com.mally.poopy.ui.home.CatDeleteActivity"
             android:theme="@style/Theme.AppCompat.Dialog"/>
         <activity
-            android:name=".ui.list.DeleteActivity"
+            android:name="com.mally.poopy.ui.list.DeleteActivity"
             android:theme="@style/Theme.AppCompat.Dialog"/>
     </application>
 

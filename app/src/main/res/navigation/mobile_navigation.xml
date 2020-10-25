@@ -7,25 +7,25 @@
 
     <fragment
         android:id="@+id/navigation_home"
-        android:name="com.example.poopy.ui.home.HomeFragment"
+        android:name="com.mally.poopy.ui.home.HomeFragment"
         android:label="@string/title_home"
         tools:layout="@layout/fragment_home" />
 
     <fragment
         android:id="@+id/navigation_cat_choice_camera"
-        android:name="com.example.poopy.ui.camera.CameraCatChoice"
+        android:name="com.mally.poopy.ui.camera.CameraCatChoice"
         android:label="Choose Pet"
         tools:layout="@layout/fragment_cat_choice" />
 
     <fragment
         android:id="@+id/navigation_cat_choice_list"
-        android:name="com.example.poopy.ui.list.ListCatChoice"
+        android:name="com.mally.poopy.ui.list.ListCatChoice"
         android:label="Choose Pet"
         tools:layout="@layout/fragment_cat_choice" />
 
     <fragment
         android:id="@+id/navigation_plus"
-        android:name="com.example.poopy.ui.plus.PlusFragment"
+        android:name="com.mally.poopy.ui.plus.PlusFragment"
         android:label="@string/title_plus"
         tools:layout="@layout/fragment_plus" />
 </navigation>
